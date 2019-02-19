@@ -2,6 +2,11 @@ import statistics
 
 
 def accessfiles(filename):
+    """
+
+    :param filename: string that refers to operant file location, file is txt
+    :return: subject number, list of time codes, and list of eventcodes
+    """
     fileref = open(filename, "r")
     filestring = fileref.read()
     fileref.close()
@@ -31,6 +36,12 @@ def accessfiles(filename):
 
 
 def rewardretrieval(timecode, eventcode):
+    """
+
+    :param timecode: list of time codes from operant conditioning file
+    :param eventcode: list of event codes from operant conditioning file
+    :return: number of reinforcers (dippers) presented, number retrieved, and latency to retrieve as floats
+    """
     dipperon = [i for i in range(len(eventcode)) if eventcode[i] == 25]
     dipperoff = [i for i in range(len(eventcode)) if eventcode[i] == 26]
     pokeon = [i for i in range(len(eventcode)) if eventcode[i] == 1011]
@@ -53,4 +64,38 @@ def rewardretrieval(timecode, eventcode):
                 latencytoretrievedipper += [round(timecode[pokewhilediponidx + diponidx] - timecode[diponidx], 2)]
                 break
                 
-    return dippersretrieved, round(statistics.mean(latencytoretrievedipper), 3)
+    return len(dipperon), dippersretrieved, round(statistics.mean(latencytoretrievedipper), 3)
+
+
+def respondingduringcueanditi(timecode, eventcode, codeon, codeoff):
+    """
+
+    :param timecode: list of time codes from operant conditioning file
+    :param eventcode: list of event codes from operant conditioning file
+    :param codeon: event code for the beginning of a cue
+    :param codeoff: event code for the end of a cue
+    :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
+    """
+    cueon = [i for i in range(len(eventcode)) if eventcode[i] == codeon]
+    cueoff = [i for i in range(len(eventcode)) if eventcode[i] == codeoff]
+    ition = [i for i in range(len(eventcode)) if eventcode[i] == codeoff or eventcode[i] == 113]
+    allpokerpm = []
+    allpokeitirpm = []
+    
+    for i in range(len(cueon)):
+        cueonidx = cueon[i]
+        cueoffidx = cueoff[i]
+        itionidx = ition[i]
+        cuelengthsec = (timecode[cueoffidx] - timecode[cueonidx])
+        pokerpm = ((eventcode[cueonidx:cueoffidx].count(1011)) / (cuelengthsec / 60))
+        allpokerpm += [pokerpm]
+        itipoke = 0
+        for x in range(itionidx, cueonidx):
+            if eventcode[x] == 1011 and timecode[x] >= (timecode[cueonidx] - cuelengthsec):
+                itipoke += 1
+        itipokerpm = itipoke / (cuelengthsec / 60)
+        allpokeitirpm += [itipokerpm]
+    print(allpokeitirpm)
+    print(allpokerpm)
+    
+    return round(statistics.mean(allpokerpm), 3), round(statistics.mean(allpokeitirpm), 3)
