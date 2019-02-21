@@ -1,6 +1,9 @@
 # OperantParadigmAnalysis-Python
 This repository will contain python scripts for analyzing output from MEDAssociates Operant Chambers. 
 
+## Background
+Operant conditioning is a form of learning that occurs through responses to behavior. For example, a mouse pushes a lever and then receives a reward. The action of pushing the lever becomes associated with the reward, and the mouse continues the behavior. In out lab, we use operant conditioning (as well as other learning paradigms, like Pavlovian) to test aspects of impulsivity.
+
 ## Problem
 I (Stephanie) will be rewriting analysis code that I wrote (self-taught, so full of anti-patterns and inefficient) in MatLab. Analysis for Nautiyal Lab operant data used to be done in Excel macros, which was time consuming, convoluted, and inflexible. Ideally this code will be accessible, so everyone in our lab will be able to use and modify it as needed. The code needs to be usable for people with very little programming experience.
 The operant boxes simply output a list of numbers, which are concatenated time and event codes (when something happened, and what happened). We need code which will read these files, separate time and event codes, and derive meaningful behavioral analysis. 
