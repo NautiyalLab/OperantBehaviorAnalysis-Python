@@ -7,9 +7,8 @@ def accessfiles(filename):
     :param filename: string that refers to operant file location, file is txt
     :return: subject number, list of time codes, and list of eventcodes
     """
-    fileref = open(filename, "r")
-    filestring = fileref.read()
-    fileref.close()
+    with open(filename, "r") as fileref:
+        filestring = fileref.read()
 
     subjectlocation = filestring.index('Subject:')
     subjectnumber = filestring[subjectlocation+9:subjectlocation+15]
@@ -31,7 +30,7 @@ def accessfiles(filename):
         else:
             timecode += [round((float(num[:-6]) / 500) - firsttimecode, 2)]
         eventcode += [int(num[-6:-2])]
-        
+
     return subjectnumber, timecode, eventcode
 
 
@@ -42,11 +41,10 @@ def rewardretrieval(timecode, eventcode):
     :param eventcode: list of event codes from operant conditioning file
     :return: number of reinforcers (dippers) presented, number retrieved, and latency to retrieve as floats
     """
-    dipperon = [i for i in range(len(eventcode)) if eventcode[i] == 25]
-    dipperoff = [i for i in range(len(eventcode)) if eventcode[i] == 26]
-    pokeon = [i for i in range(len(eventcode)) if eventcode[i] == 1011]
-    pokeoff = [i for i in range(len(eventcode)) if eventcode[i] == 1001]
-
+    dipperon = [i for i, event in enumerate(eventcode) if event == 25]
+    dipperoff = [i for i, event in enumerate(eventcode) if event == 26]
+    pokeon = [i for i, event in enumerate(eventcode) if event == 1011]
+    pokeoff = [i for i, event in enumerate(eventcode) if event == 1001]
     dippersretrieved = 0
     latencytoretrievedipper = []
 
@@ -63,7 +61,6 @@ def rewardretrieval(timecode, eventcode):
                 pokewhilediponidx = eventcode[diponidx:dipoffidx].index(1011)
                 latencytoretrievedipper += [round(timecode[pokewhilediponidx + diponidx] - timecode[diponidx], 2)]
                 break
-                
     return len(dipperon), dippersretrieved, round(statistics.mean(latencytoretrievedipper), 3)
 
 
@@ -76,12 +73,12 @@ def respondingduringcueanditi(timecode, eventcode, codeon, codeoff):
     :param codeoff: event code for the end of a cue
     :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
     """
-    cueon = [i for i in range(len(eventcode)) if eventcode[i] == codeon]
-    cueoff = [i for i in range(len(eventcode)) if eventcode[i] == codeoff]
-    ition = [i for i in range(len(eventcode)) if eventcode[i] == codeoff or eventcode[i] == 113]
+    cueon = [i for i, event in enumerate(eventcode) if event == codeon]
+    cueoff = [i for i, event in enumerate(eventcode) if event == codeoff]
+    ition = [i for i, event in enumerate(eventcode) if event == codeoff or event == 113]
     allpokerpm = []
     allpokeitirpm = []
-    
+
     for i in range(len(cueon)):
         cueonidx = cueon[i]
         cueoffidx = cueoff[i]
@@ -95,7 +92,5 @@ def respondingduringcueanditi(timecode, eventcode, codeon, codeoff):
                 itipoke += 1
         itipokerpm = itipoke / (cuelengthsec / 60)
         allpokeitirpm += [itipokerpm]
-    print(allpokeitirpm)
-    print(allpokerpm)
     
     return round(statistics.mean(allpokerpm), 3), round(statistics.mean(allpokeitirpm), 3)
