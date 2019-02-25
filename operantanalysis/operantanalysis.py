@@ -94,3 +94,16 @@ def respondingduringcueanditi(timecode, eventcode, codeon, codeoff):
         allpokeitirpm += [itipokerpm]
     
     return round(statistics.mean(allpokerpm), 3), round(statistics.mean(allpokeitirpm), 3)
+
+
+def leverpressing(eventcode, lever1, lever2=False):
+    lever1presses = eventcode.count(lever1)
+    if bool(lever2):
+        lever2presses = eventcode.count(lever2)
+    else:
+        lever2presses = 0
+    totalleverpresses = lever1presses + lever2presses
+
+    return lever1presses, lever2presses, totalleverpresses
+
+
