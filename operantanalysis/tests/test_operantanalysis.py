@@ -23,3 +23,9 @@ def test_respondingduringcueanditi():
     assert respondingduringcueanditi([0, 1, 2, 3, 4, 5], [113, 1011, 1, 1011, 2, 1011], 1, 2) == (30.0, 30.0)
     assert respondingduringcueanditi([0, 1, 2, 3, 4, 5], [113, 1, 1011, 1011, 2, 1011], 1, 2) == (40.0, 0.0)
     assert respondingduringcueanditi([0, 1, 2, 3, 4, 5], [113, 1011, 1011, 1, 2, 1011], 1, 2) == (0.0, 60.0)
+
+    
+def test_leverpressing():
+    assert leverpressing([113, 1011, 1, 1011, 2, 1011], 1, 2) == (1, 1, 2)
+    assert leverpressing([113, 1, 1011, 1011, 2, 1011], 1) == (1, 0, 1)
+    assert leverpressing([113, 1011, 1011, 1, 2, 2, 1011], 1, 2) == (1, 2, 3)
