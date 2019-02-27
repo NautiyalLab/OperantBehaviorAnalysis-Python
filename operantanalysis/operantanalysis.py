@@ -11,10 +11,10 @@ def accessfiles(filename):
         filestring = fileref.read()
 
     subjectlocation = filestring.index('Subject:')
-    subjectnumber = filestring[subjectlocation+9:subjectlocation+15]
+    subjectnumber = filestring[subjectlocation + 9:subjectlocation + 15]
 
     warraybegin = filestring.index('W:')
-    timeeventcodes = filestring[warraybegin+1:].split()[2:]
+    timeeventcodes = filestring[warraybegin + 1:].split()[2:]
 
     for num in timeeventcodes:
         if ':' in num:
