@@ -1,11 +1,8 @@
 from ..operantanalysis import accessfiles, rewardretrieval, respondingduringcueanditi, leverpressing
 import os.path as op
 
-data_path = op.join(.operantanalysis.__path__[0], 'sampledata')
-
-
 def test_accessfiles():
-    (subjectnumber, timecode, eventcode) = accessfiles(data_path)
+    (subjectnumber, timecode, eventcode) = accessfiles("/operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
     assert len(timecode) == len(eventcode)
     for i in timecode:
         assert bool(i >= 0)
