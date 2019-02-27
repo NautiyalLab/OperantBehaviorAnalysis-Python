@@ -3,7 +3,7 @@ from operantanalysis import accessfiles, rewardretrieval, respondingduringcueand
 
 def test_accessfiles():
     (subjectnumber, timecode, eventcode) = accessfiles(
-        "/Users/stephanie/Documents/MatLab/OC1/PCER - 11-27-18/!2018-11-27_08h39m.Subject _0001.txt")
+        "../sampledata/!2018-11-27_08h39m.Subject _0001.txt")
     assert len(timecode) == len(eventcode)
     for i in timecode:
         assert bool(i >= 0)
