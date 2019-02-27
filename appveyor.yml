@@ -28,4 +28,4 @@ install:
 test_script:
   - mkdir for_test
   - cd for_test
-  - py.test --pyargs operantanalysis --cov-report term-missing --cov=operantanalysis
+  - py.test --pyargs ./operantanalysis/operantanalysis --cov-report term-missing --cov=./operantanalysis/operantanalysis
