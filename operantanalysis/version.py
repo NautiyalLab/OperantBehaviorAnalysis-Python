@@ -62,5 +62,5 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-PACKAGE_DATA = {'operantanalysis': [pjoin('data', '*')]}
-REQUIRES = 
+PACKAGE_DATA = {'operantanalysis': [pjoin('sampledata', '*')]}
+REQUIRES = []
