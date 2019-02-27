@@ -1,4 +1,5 @@
 import statistics
+__all__ = ["accessfiles", "rewardretrieval", "respondingduringcueanditi", "leverpressing"]
 
 
 def accessfiles(filename):
@@ -105,5 +106,3 @@ def leverpressing(eventcode, lever1, lever2=False):
     totalleverpresses = lever1presses + lever2presses
 
     return lever1presses, lever2presses, totalleverpresses
-
-
