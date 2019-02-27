@@ -1,4 +1,4 @@
-from .operantanalysis import *
+from ..operantanalysis import *
 
 
 def test_accessfiles():
