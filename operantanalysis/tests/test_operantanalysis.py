@@ -1,5 +1,5 @@
 from ..operantanalysis import accessfiles, rewardretrieval, respondingduringcueanditi, leverpressing
-import os.path as op
+
 
 def test_accessfiles():
     (subjectnumber, timecode, eventcode) = accessfiles("../operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
