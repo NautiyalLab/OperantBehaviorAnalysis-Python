@@ -1,7 +1,7 @@
 from ..operantanalysis import accessfiles, rewardretrieval, respondingduringcueanditi, leverpressing
 import os.path as op
 
-data_path = op.join(..operantanalysis.__path__[0], 'sampledata')
+data_path = op.join(.operantanalysis.__path__[0], 'sampledata')
 
 
 def test_accessfiles():
