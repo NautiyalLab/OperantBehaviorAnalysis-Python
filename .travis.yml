@@ -7,6 +7,9 @@ python:
 env:
   global:
     - PIP_DEPS="pytest coveralls pytest-cov flake8"
+    
+before_install:
+  - pip install --upgrade pytest
 
 install:
 - travis_retry pip install $PIP_DEPS
