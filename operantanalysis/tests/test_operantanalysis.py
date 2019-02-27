@@ -1,4 +1,4 @@
-from operantanalysis import accessfiles, rewardretrieval, respondingduringcueanditi, leverpressing
+from operantanalysis import *
 
 
 def test_accessfiles():
