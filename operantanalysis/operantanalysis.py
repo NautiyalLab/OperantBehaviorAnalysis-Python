@@ -102,7 +102,7 @@ def lever_pressing(eventcode, lever1, lever2=False):
 
     :param eventcode: list of event codes from operant conditioning file
     :param lever1: eventcode for lever pressing
-    :param lever2: optional parameter for second lever eventcode if two levers are used 
+    :param lever2: optional parameter for second lever eventcode if two levers are used
     :return: count of first lever presses, second lever presses, and total lever presses, as int
     """
     lever1_presses = eventcode.count(lever1)
