@@ -12,7 +12,7 @@ def test_reward_retrieval():
     assert reward_retrieval([0, 1, 2, 3, 4], [1011, 25, 26, 1001, 1011]) == (1, 1, 0)
     assert reward_retrieval([0, 1, 2, 3, 4], [25, 1011, 26, 1001, 1011]) == (1, 1, 1)
     assert reward_retrieval([0, 1, 2, 3, 4, 5, 6], [25, 1011, 1001, 1011, 26, 1001, 1011]) == (1, 1, 1)
-    assert rreward_retrieval([0, 1, 2, 3, 4, 5, 6, 7], [1011, 25, 26, 25, 26, 1001, 1011, 1001]) == (2, 2, 0)
+    assert reward_retrieval([0, 1, 2, 3, 4, 5, 6, 7], [1011, 25, 26, 25, 26, 1001, 1011, 1001]) == (2, 2, 0)
 
 
 def test_cue_iti_responding():
