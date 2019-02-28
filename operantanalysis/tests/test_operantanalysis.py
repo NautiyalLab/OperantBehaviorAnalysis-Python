@@ -4,9 +4,8 @@ from operantanalysis import accessfiles, rewardretrieval, respondingduringcueand
 def test_accessfiles():
     (subjectnumber, timecode, eventcode) = accessfiles("../operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
     assert len(timecode) == len(eventcode)
-    nonnegative = lambda x: x>=0
-    assert all(map(nonnegative, timecode))
-    assert all(map(nonnegative, eventcode))
+    assert all(map(lambda x: x >= 0, timecode))
+    assert all(map(lambda x: x >= 0, eventcode))
 
 
 def test_rewardretrieval():
