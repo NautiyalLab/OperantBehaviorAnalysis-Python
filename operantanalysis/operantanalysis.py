@@ -106,7 +106,7 @@ def lever_pressing(eventcode, lever1, lever2=False):
     :return: count of first lever presses, second lever presses, and total lever presses, as int
     """
     lever1_presses = eventcode.count(lever1)
-    if bool(lever2):
+    if lever2:
         lever2_presses = eventcode.count(lever2)
     else:
         lever2_presses = 0
