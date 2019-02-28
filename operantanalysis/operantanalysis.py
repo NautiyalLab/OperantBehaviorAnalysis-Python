@@ -1,108 +1,115 @@
 import statistics
-__all__ = ["accessfiles", "rewardretrieval", "respondingduringcueanditi", "leverpressing"]
+__all__ = ["load_file", "reward_retrieval", "cue_iti_responding", "lever_pressing"]
 
 
-def accessfiles(filename):
+def load_file(filename):
     """
 
-    :param filename: string that refers to operant file location, file is txt
+    :param filename: string that refers to single operant file location, file is txt
     :return: subject number, list of time codes, and list of eventcodes
     """
     with open(filename, "r") as fileref:
         filestring = fileref.read()
 
-    subjectlocation = filestring.index('Subject:')
-    subjectnumber = filestring[subjectlocation + 9:subjectlocation + 15]
+    subject_location = filestring.index('Subject:')
+    subject_number = filestring[subject_location + 9:subject_location + 15]
 
-    warraybegin = filestring.index('W:')
-    timeeventcodes = filestring[warraybegin + 1:].split()[2:]
+    warray_begin = filestring.index('W:')
+    time_event_codes = filestring[warray_begin + 1:].split()[2:]
 
-    for num in timeeventcodes:
+    for num in time_event_codes:
         if ':' in num:
-            timeeventcodes.remove(num)
+            time_event_codes.remove(num)
 
     timecode = []
     eventcode = []
-    firsttimecode = (float(timeeventcodes[0][:-6]) / 500)
+    first_timecode = (float(time_event_codes[0][:-6]) / 500)
 
-    for num in timeeventcodes:
-        if num == timeeventcodes[0]:
+    for num in time_event_codes:
+        if num == time_event_codes[0]:
             timecode += [0.0]
         else:
-            timecode += [round((float(num[:-6]) / 500) - firsttimecode, 2)]
+            timecode += [round((float(num[:-6]) / 500) - first_timecode, 2)]
         eventcode += [int(num[-6:-2])]
 
-    return subjectnumber, timecode, eventcode
+    return subject_number, timecode, eventcode
 
 
-def rewardretrieval(timecode, eventcode):
+def reward_retrieval(timecode, eventcode):
     """
 
     :param timecode: list of time codes from operant conditioning file
     :param eventcode: list of event codes from operant conditioning file
     :return: number of reinforcers (dippers) presented, number retrieved, and latency to retrieve as floats
     """
-    dipperon = [i for i, event in enumerate(eventcode) if event == 25]
-    dipperoff = [i for i, event in enumerate(eventcode) if event == 26]
-    pokeon = [i for i, event in enumerate(eventcode) if event == 1011]
-    pokeoff = [i for i, event in enumerate(eventcode) if event == 1001]
-    dippersretrieved = 0
-    latencytoretrievedipper = []
+    dip_on = [i for i, event in enumerate(eventcode) if event == 25]
+    dip_off = [i for i, event in enumerate(eventcode) if event == 26]
+    poke_on = [i for i, event in enumerate(eventcode) if event == 1011]
+    poke_off = [i for i, event in enumerate(eventcode) if event == 1001]
+    dips_retrieved = 0
+    latency_dip_retrieval = []
 
-    for i in range(len(dipperon)):
-        for x in range(len(pokeoff)):
-            diponidx = dipperon[i]
-            dipoffidx = dipperoff[i]
-            if pokeon[x] < diponidx < pokeoff[x]:
-                dippersretrieved += 1
-                latencytoretrievedipper += [0]
+    for i in range(len(dip_on)):
+        for x in range(len(poke_off)):
+            dip_on_idx = dip_on[i]
+            dip_off_idx = dip_off[i]
+            if poke_on[x] < dip_on_idx < poke_off[x]:
+                dips_retrieved += 1
+                latency_dip_retrieval += [0]
                 break
-            elif 1011 in eventcode[diponidx:dipoffidx]:
-                dippersretrieved += 1
-                pokewhilediponidx = eventcode[diponidx:dipoffidx].index(1011)
-                latencytoretrievedipper += [round(timecode[pokewhilediponidx + diponidx] - timecode[diponidx], 2)]
+            elif 1011 in eventcode[dip_on_idx:dip_off_idx]:
+                dips_retrieved += 1
+                poke_during_dip_idx = eventcode[dip_on_idx:dip_off_idx].index(1011)
+                latency_dip_retrieval += [round(timecode[poke_during_dip_idx + dip_on_idx] - timecode[dip_on_idx], 2)]
                 break
-    return len(dipperon), dippersretrieved, round(statistics.mean(latencytoretrievedipper), 3)
+    return len(dip_on), dips_retrieved, round(statistics.mean(latency_dip_retrieval), 3)
 
 
-def respondingduringcueanditi(timecode, eventcode, codeon, codeoff):
+def cue_iti_responding(timecode, eventcode, code_on, code_off):
     """
 
     :param timecode: list of time codes from operant conditioning file
     :param eventcode: list of event codes from operant conditioning file
-    :param codeon: event code for the beginning of a cue
-    :param codeoff: event code for the end of a cue
+    :param code_on: event code for the beginning of a cue
+    :param code_off: event code for the end of a cue
     :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
     """
-    cueon = [i for i, event in enumerate(eventcode) if event == codeon]
-    cueoff = [i for i, event in enumerate(eventcode) if event == codeoff]
-    ition = [i for i, event in enumerate(eventcode) if event == codeoff or event == 113]
-    allpokerpm = []
-    allpokeitirpm = []
+    cue_on = [i for i, event in enumerate(eventcode) if event == code_on]
+    cue_off = [i for i, event in enumerate(eventcode) if event == code_off]
+    iti_on = [i for i, event in enumerate(eventcode) if event == code_off or event == 113]
+    all_poke_rpm = []
+    all_poke_iti_rpm = []
 
-    for i in range(len(cueon)):
-        cueonidx = cueon[i]
-        cueoffidx = cueoff[i]
-        itionidx = ition[i]
-        cuelengthsec = (timecode[cueoffidx] - timecode[cueonidx])
-        pokerpm = ((eventcode[cueonidx:cueoffidx].count(1011)) / (cuelengthsec / 60))
-        allpokerpm += [pokerpm]
-        itipoke = 0
-        for x in range(itionidx, cueonidx):
-            if eventcode[x] == 1011 and timecode[x] >= (timecode[cueonidx] - cuelengthsec):
-                itipoke += 1
-        itipokerpm = itipoke / (cuelengthsec / 60)
-        allpokeitirpm += [itipokerpm]
+    for i in range(len(cue_on)):
+        cue_on_idx = cue_on[i]
+        cue_off_idx = cue_off[i]
+        iti_on_idx = iti_on[i]
+        cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
+        poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count(1011)) / (cue_length_sec / 60))
+        all_poke_rpm += [poke_rpm]
+        iti_poke = 0
+        for x in range(iti_on_idx, cue_on_idx):
+            if eventcode[x] == 1011 and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
+                iti_poke += 1
+        iti_poke_rpm = iti_poke / (cue_length_sec / 60)
+        all_poke_iti_rpm += [iti_poke_rpm]
     
-    return round(statistics.mean(allpokerpm), 3), round(statistics.mean(allpokeitirpm), 3)
+    return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3)
 
 
-def leverpressing(eventcode, lever1, lever2=False):
-    lever1presses = eventcode.count(lever1)
+def lever_pressing(eventcode, lever1, lever2=False):
+    """
+
+    :param eventcode: list of event codes from operant conditioning file
+    :param lever1: eventcode for lever pressing
+    :param lever2: optional parameter for second lever eventcode if two levers are used 
+    :return: count of first lever presses, second lever presses, and total lever presses, as int
+    """
+    lever1_presses = eventcode.count(lever1)
     if bool(lever2):
-        lever2presses = eventcode.count(lever2)
+        lever2_presses = eventcode.count(lever2)
     else:
-        lever2presses = 0
-    totalleverpresses = lever1presses + lever2presses
+        lever2_presses = 0
+    total_lever_presses = lever1_presses + lever2_presses
 
-    return lever1presses, lever2presses, totalleverpresses
+    return lever1_presses, lever2_presses, total_lever_presses
