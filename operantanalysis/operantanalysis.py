@@ -1,5 +1,5 @@
 import statistics
-from eventcodes import eventcodes_dictionary
+from .eventcodes import eventcodes_dictionary
 __all__ = ["load_file", "extract_info_from_file", "reward_retrieval", "cue_iti_responding", "lever_pressing", "lever_press_latency"]
 
 
@@ -142,7 +142,7 @@ def lever_press_latency(timecode, eventcode, leveron, leverpress):
     """
     leveron = [i for i, event in enumerate(eventcode) if event == leveron or event == 'EndSession']
     latencytopress = []
-    for i in range(len(leveron)-1):
+    for i in range(len(leveron) - 1):
         leveronidx = leveron[i]
         if leverpress in eventcode[leveronidx:leveron[i + 1]]:
             leverpressidx = eventcode[leveronidx:leveron[i + 1]].index(leverpress)
