@@ -1,4 +1,4 @@
-from operantanalysis import load_file, extract_info_from_file,  reward_retrieval, cue_iti_responding, lever_pressing, lever_press_latency
+from operantanalysis import load_file, extract_info_from_file, reward_retrieval, cue_iti_responding, lever_pressing, lever_press_latency
 
 
 def test_load_files():
