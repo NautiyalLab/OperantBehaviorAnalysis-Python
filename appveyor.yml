@@ -23,4 +23,4 @@ install:
 test_script:
   - mkdir for_test
   - cd for_test
-  - pytest --pyargs C:\projects\operantparadigmanalysis-python\operantanalysis --cov-report term-missing --cov=C:\projects\operantparadigmanalysis-python\operantanalysis
+  - pytest --pyargs C:\projects\operantbehavioranalysis-python\operantanalysis --cov-report term-missing --cov=C:\projects\operantbehavioranalysis-python\operantanalysis
