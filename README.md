@@ -1,4 +1,4 @@
-# OperantParadigmAnalysis-Python
+# OperantBehaviorAnalysis-Python
 This repository will contain python scripts for analyzing output from MEDAssociates Operant Chambers. 
 
 ## Background
@@ -15,7 +15,7 @@ The first goal will be to write scripts for each operant paradigm, which will an
 The second goal will be to extend the scripts to analyze multiple animals across days.
 The final goal will be to graph the computed analysis.
 
-## Paradigms
+## Paradigms and Schedules
 #### Trough Train (1 and 2)
 #### Continuous Reinforcement Schedule (CRF)
 #### Random Ratio and Random Interval (possibly could use CRF script)
