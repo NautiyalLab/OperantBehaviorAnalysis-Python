@@ -22,6 +22,7 @@ def load_file(filename):
         elif line[0] == ' ':
             fields_dictionary[name] += line
             fields_dictionary[name] = fields_dictionary[name].replace('\n', '')
+            
     return fields_dictionary
 
 
@@ -78,6 +79,7 @@ def reward_retrieval(timecode, eventcode):
                 poke_during_dip_idx = eventcode[dip_on_idx:dip_off_idx].index('PokeOn1')
                 latency_dip_retrieval += [round(timecode[poke_during_dip_idx + dip_on_idx] - timecode[dip_on_idx], 2)]
                 break
+                
     return len(dip_on), dips_retrieved, round(statistics.mean(latency_dip_retrieval), 3)
 
 
@@ -131,7 +133,7 @@ def lever_pressing(eventcode, lever1, lever2=False):
     return lever1_presses, lever2_presses, total_lever_presses
 
 
-def lever_press_latency(timecode, eventcode, leveron, leverpress):
+def lever_press_latency(timecode, eventcode, lever_on, lever_press):
     """
 
     :param timecode: list of times (in seconds) when events occurred
@@ -140,17 +142,17 @@ def lever_press_latency(timecode, eventcode, leveron, leverpress):
     :param leverpress: event name for lever press
     :return: the mean latency to press the lever in seconds
     """
-    leveron = [i for i, event in enumerate(eventcode) if event == leveron or event == 'EndSession']
-    latencytopress = []
-    for i in range(len(leveron) - 1):
-        leveronidx = leveron[i]
-        if leverpress in eventcode[leveronidx:leveron[i + 1]]:
-            leverpressidx = eventcode[leveronidx:leveron[i + 1]].index(leverpress)
-            latencytopress += [round(timecode[leveronidx + leverpressidx] - timecode[leveronidx], 2)]
+    lever_on = [i for i, event in enumerate(eventcode) if event == lever_on or event == 'EndSession']
+    press_latency = []
+    for i in range(len(lever_on) - 1):
+        lever_on_idx = lever_on[i]
+        if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+            lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
+            press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
             break
         else:
             None
-    if len(latencytopress) > 0:
-        return round(statistics.mean(latencytopress), 3)
+    if len(press_latency) > 0:
+        return round(statistics.mean(press_latency), 3)
     else:
         return "No presses"
