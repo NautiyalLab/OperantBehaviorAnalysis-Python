@@ -6,7 +6,7 @@ __all__ = ["load_file", "extract_info_from_file", "reward_retrieval", "cue_iti_r
 def load_file(filename):
     """
 
-    :param filename: string that refers to single operant file location, file is txt
+    :param filename: string that refers to operant file location
     :return: dictionary of all the fields and their values contained in the file (like subject, group, or w array)
     """
     with open(filename, "r") as fileref:
