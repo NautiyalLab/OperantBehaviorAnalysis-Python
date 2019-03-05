@@ -60,7 +60,7 @@ def reward_retrieval(timecode, eventcode):
     :return: number of reinforcers (dippers) presented, number retrieved, and latency to retrieve as floats
     """
     dip_on = [i for i, event in enumerate(eventcode) if event == 'DipOn']
-    dip_off = [i for i, event in enumerate(eventcode) if event == 'DipOff']
+    dip_off = [i for i, event in enumerate(eventcode) if event == 'DipOff' or event == 'EndSession']
     poke_on = [i for i, event in enumerate(eventcode) if event == 'PokeOn1']
     poke_off = [i for i, event in enumerate(eventcode) if event == 'PokeOff1']
     dips_retrieved = 0
