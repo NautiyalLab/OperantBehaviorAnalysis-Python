@@ -17,8 +17,18 @@ The final goal will be to graph the computed analysis.
 
 ## Paradigms and Schedules
 #### Trough Train (1 and 2)
+- In TT1, dipper comes up randomly and remains until reward is retrieved
+- In TT2, dipper comes up randomly and remains up for a short time
+- measures needed: total dippers, dippers retrieved, latency to retrieve dipper
 #### Continuous Reinforcement Schedule (CRF)
-#### Random Ratio and Random Interval (possibly could use CRF script)
+- Lever(s) come out, all presses are rewarded
+- measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
+#### Random Ratio (possibly could use CRF script)
+- Lever(s) come out, animal must press lever random number of times (this averages to a specified number) to receive reward
+- measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
+#### Random Interval (possibly could use CRF script)
+- Lever(s) come out, first lever press after a random ITI (this averages to a specified time) receives a reward
+- measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
 #### Operant Sensation Seeking
 #### Conditioned Inhibition
 #### Pavlovian Cue Elicited Responding
