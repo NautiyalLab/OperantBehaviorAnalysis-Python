@@ -1,8 +1,8 @@
 # OperantBehaviorAnalysis-Python
-This repository will contain python scripts for analyzing output from MEDAssociates Operant Chambers. 
+This repository will be used in the Nautiyal Lab for analyzing output from MEDAssociates Operant Chambers. 
 
 ## Background
-Operant conditioning is a form of learning that occurs through responses to behavior. For example, a mouse pushes a lever and then receives a reward. The action of pushing the lever becomes associated with the reward, and the mouse continues the behavior. In out lab, we use operant conditioning (as well as other learning paradigms, like Pavlovian) to test aspects of impulsivity.
+Operant conditioning is a form of learning that occurs through responses to behavior. For example, a mouse pushes a lever and then receives a reward. The action of pushing the lever becomes associated with the reward, and the mouse continues the behavior. In out lab, we use operant (as well as Pavlovian) conditioning to examine different aspects of impulsivity.
 
 ## Problem
 I (Stephanie) will be rewriting analysis code that I wrote (self-taught, so full of anti-patterns and inefficient) in MatLab. Analysis for Nautiyal Lab operant data used to be done in Excel macros, which was time consuming, convoluted, and inflexible. Ideally this code will be accessible, so everyone in our lab will be able to use and modify it as needed. The code needs to be usable for people with very little programming experience.
@@ -16,42 +16,64 @@ The second goal will be to write scripts to analyze multiple animals across days
 The final goal will be to graph the computed analysis.
 
 ## Paradigms and Schedules
-#### Trough Train (1 and 2)
+### Trough Train (1 and 2)
 - In TT1, dipper comes up randomly and remains until reward is retrieved
 - In TT2, dipper comes up randomly and remains up for a short time
 - measures needed: total dippers, dippers retrieved, latency to retrieve dipper
-#### Continuous Reinforcement Schedule (CRF)
+### Continuous Reinforcement Schedule (CRF)
 - Lever(s) come out, all presses are rewarded
+- In CRF training, after 2 lever presses, levers go back in, and then come out again after an ITI
 - measures needed: total head pokes, total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, latency to press after lever presentation (meaningful)
-#### Random Ratio
+### Random Ratio
 - Lever(s) come out, animal must press lever random number of times (this averages to a specified number) to receive reward
 - measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
-#### Random Interval (possibly could use RR script)
+### Random Interval (possibly could use RR script)
 - Lever(s) come out, first lever press after a random ITI (this averages to a specified time) receives a reward
+- Also known as Variable Interval
 - measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
-#### Operant Sensation Seeking
+### Operant Sensation Seeking
 - Levers come out, all presses on the "active" lever are rewarded with a combination of stimuli (white noise and blinking lights at varying frequency, for a variable time interval)
 - For control group, no lever presses are rewarded
 - measures needed: total active and inactive lever presses
-#### Conditioned Inhibition
+### Conditioned Inhibition
 - measures needed: rate of responding during each cue type, responding during an equivalent portion of the ITI preceeding the cue, elevation score 
-##### Training
-##### Summation
--additional measure needed: 
-##### Retardation
-#### Pavlovian Cue Elicited Responding
+#### Training
+- In experimental animals, cue 1 is followed by reward, cue 2 is followed by reward, cue 1/cue 3 is not rewarded
+- In control animals, cue 1 is followed by reward, cue 2 is followed by reward, cue 3 is not rewarded
+#### Summation
+- Cue 2 is followed by reward, cue 2/cue 3 is not rewarded
+- additional measure needed: 
+#### Retardation
+- Cue 3 is followed by reward
+### Pavlovian Cue Elicited Responding
+- Cue presentation is followed by reward
 - measures needed: total dippers, dippers retrieved, latency to retrieve dipper, response rate and duration during cue (each binned by seconds), overall response rate during cue/equivalent portion of the ITI preceeding the cue
-##### PCER with Unrewarded Trials
--additional measure needed: response rate and duration during unrewarded "wait period" following cue (each binned by seconds) 
-#### Go/No-Go
+#### PCER with Unrewarded Trials
+- Random cue trials are not rewarded
+- additional measure needed: response rate and duration during unrewarded "wait period" following cue (each binned by seconds) 
+### Go/No-Go
+- During go trials, lever press is rewarded
+- During no-go trials, withholding lever pressing is rewarded
 - measures needed: total head pokes, total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, number of go/no-go trials, latency to push lever during go/no-go trials, number of successful go/no-go trials, overall latency to press after lever presentation (meaningful)
-#### Progressive Ratio
+### Progressive Ratio
+- Each subsequent reward requires more lever pressing
+- For example in PRx2, 1 press is needed for reward, then 2, 4, 8, 16, etc
 - measures needed: total head pokes, total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, breakpoint
-#### Differential Reinforcement of Low Rate Responding
+### Differential Reinforcement of Low Rate Responding
+- Animals must withhold lever presses until after a wait period is over to be rewarded
+- If they resond early, the wait period starts over
 - measures needed: total head pokes, total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, lever to dipper ratio, peak mode latencies, histogram of lever press latencies (binned by 3 seconds)
-#### Habit
-##### Training
-##### Extinction
-##### Reaquisition
-##### Devaluation
-#### Visualization of Session
+### Habit
+- Current testing schedule: VI30 (3 days), VI60 (3/6/9 days), Extinction, Reaquisition (VI60), Devaluation (3 days, day off in between session), Extinction 2, Reaquisition 2 (VI60) 
+#### Training
+- Trained using a random interval schedule
+- measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
+#### Extinction
+- Lever presses are not rewarded (15 minutes total)
+- measures needed: total lever presses, rate of lever pressing (binned by 5 minutes)
+#### Reaquisition
+- Random interval schedule again
+- measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, rate of lever pressing (binned by 5 minutes)
+#### Devaluation
+- Animals are given LiCl and receive randomly delivered rewards (1 hour total)
+### Visualization of Session
