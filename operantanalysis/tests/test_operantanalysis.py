@@ -1,4 +1,5 @@
-from operantanalysis import load_file, extract_info_from_file, reward_retrieval, cue_iti_responding, lever_pressing, lever_press_latency
+from operantanalysis import load_file, extract_info_from_file,  reward_retrieval, cue_iti_responding, lever_pressing, \
+    lever_press_latency, total_head_pokes, num_successful_go_nogo_trials, count_go_nogo_trials
 
 
 def test_load_files():
@@ -38,3 +39,21 @@ def test_lever_press_latency():
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 1
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'PokeOn1', 'EndSession'], 'LPressOn', 'RPressOn') == "No presses"
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 0, 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 2
+
+    
+def test_total_head_pokes():
+    assert total_head_pokes(['StartSession', 'PokeOn1', 'LPressOn', 'PokeOn1', 'RPressOn', 'PokeOn1']) == 3
+    assert total_head_pokes(['StartSession', 'LPressOn', 'PokeOn1', 'PokeOn1', 'RPressOn', 'PokeOn1']) == 3
+    assert total_head_pokes(['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'RPressOn', 'RPressOn', 'PokeOn1']) == 3
+
+
+def test_num_successful_go_nogo_trials():
+    assert num_successful_go_nogo_trials(['StartSession', 'SuccessfulGoTrial', 'PokeOn1', 'RPressOn', 'PokeOn1']) == (1, 0)
+    assert num_successful_go_nogo_trials(['StartSession', 'LPressOn', 'PokeOn1', 'PokeOn1', 'RPressOn', 'PokeOn1']) == (0, 0)
+    assert num_successful_go_nogo_trials(['StartSession', 'SuccessfulNoGoTrial', 'SuccessfulNoGoTrial', 'LPressOn', 'RPressOn', 'SuccessfulGoTrial']) == (1, 2)
+
+
+def test_count_go_nogo_trials():
+    assert count_go_nogo_trials(['StartSession', 'PokeOn1', 'LightOn1', 'LightOn1', 'RLeverOn', 'EndSession']) == (1, 0)
+    assert count_go_nogo_trials(['StartSession', 'RLeverOn', 'PokeOn1', 'RLeverOn', 'LightOn1', 'RLeverOn', 'LightOn1']) == (1, 2)
+    assert count_go_nogo_trials(['StartSession', 'RLeverOn', 'PokeOn1', 'SuccessfulNoGoTrial', 'RLeverOn', 'LightOn1']) == (1, 1)
