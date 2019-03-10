@@ -14,7 +14,7 @@ df = pd.DataFrame(columns=column_list)
 
 
 for i in range(days):
-    root = Tk() # noqa
+    root = Tk()  # noqa
     root.withdraw()
     folder_selected = filedialog.askdirectory()
     x = folder_selected + '/*'
