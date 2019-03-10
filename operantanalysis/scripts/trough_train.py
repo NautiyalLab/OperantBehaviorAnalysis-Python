@@ -1,4 +1,4 @@
-from workingproject import load_file, extract_info_from_file, reward_retrieval
+from operantanalysis import load_file, extract_info_from_file, reward_retrieval
 import glob
 from tkinter import filedialog
 from tkinter import *  # noqa
