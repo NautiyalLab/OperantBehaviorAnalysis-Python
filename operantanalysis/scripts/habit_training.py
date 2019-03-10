@@ -1,4 +1,4 @@
-from operantanalysis import load_file, extract_info_from_file,  reward_retrieval, lever_pressing
+from operantanalysis import load_file, extract_info_from_file, reward_retrieval, lever_pressing
 import glob
 from tkinter import filedialog
 from tkinter import *  # noqa
@@ -14,7 +14,7 @@ df = pd.DataFrame(columns=column_list)
 
 
 for i in range(days):
-    root = Tk()
+    root = Tk() # noqa
     root.withdraw()
     folder_selected = filedialog.askdirectory()
     x = folder_selected + '/*'
@@ -32,10 +32,10 @@ group_means = df.groupby(['Day', 'Training'])['Dippers', 'Lever Presses'].mean()
 group_sems = df.groupby(['Day', 'Training'])['Dippers', 'Lever Presses'].sem().unstack()
 
 group_means['Lever Presses'].plot(legend=True, yerr=group_sems['Lever Presses'], ylim=[0, 5000],
-                                  xlim=[0, days+1], xticks=(range(1, days+1, 1)), marker='o', capsize=3, elinewidth=1)
+                                  xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
 plt.ylabel('Lever Presses')
 
 group_means['Dippers'].plot(legend=True, yerr=group_sems['Dippers'], ylim=[0, 60],
-                            xlim=[0, days+1], xticks=(range(1, days+1, 1)), marker='o', capsize=3, elinewidth=1)
+                            xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
 plt.ylabel('Dippers')
 plt.show()
