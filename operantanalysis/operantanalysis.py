@@ -1,6 +1,7 @@
 import statistics
 from .eventcodes import eventcodes_dictionary
-__all__ = ["load_file", "extract_info_from_file", "reward_retrieval", "cue_iti_responding", "lever_pressing", "lever_press_latency"]
+__all__ = ["load_file", "extract_info_from_file", "reward_retrieval", "cue_iti_responding", "lever_pressing", "lever_press_latency",
+           "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials"]
 
 
 def load_file(filename):
@@ -60,7 +61,7 @@ def reward_retrieval(timecode, eventcode):
     :return: number of reinforcers (dippers) presented, number retrieved, and latency to retrieve as floats
     """
     dip_on = [i for i, event in enumerate(eventcode) if event == 'DipOn']
-    dip_off = [i for i, event in enumerate(eventcode) if event == 'DipOff']
+    dip_off = [i for i, event in enumerate(eventcode) if event == 'DipOff' or event == 'EndSession']
     poke_on = [i for i, event in enumerate(eventcode) if event == 'PokeOn1']
     poke_off = [i for i, event in enumerate(eventcode) if event == 'PokeOff1']
     dips_retrieved = 0
@@ -156,3 +157,37 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
         return round(statistics.mean(press_latency), 3)
     else:
         return "No presses"
+
+
+def total_head_pokes(eventcode):
+    """
+
+    :param eventcode: list of event codes from operant conditioning file
+    :return: total number of times animal poked head into reward receptacle
+    """
+    return eventcode.count("PokeOn1")
+
+
+def num_successful_go_nogo_trials(eventcode):
+    """
+
+    :param eventcode: list of event codes from operant conditioning file
+    :return: number of successful go and no go trials in the go/no go tasks
+    """
+    return eventcode.count('SuccessfulGoTrial'), eventcode.count('SuccessfulNoGoTrial')
+
+
+def count_go_nogo_trials(eventcode):
+    """
+
+    :param eventcode: list of event codes from operant conditioning file
+    :return: number of go and no go trials in the go/no go tasks
+    """
+    lever_on = [i for i, event in enumerate(eventcode) if event == 'RLeverOn' or event == 'LLeverOn']
+    (go_trials, nogo_trials) = (0, 0)
+    for lever in lever_on:
+        if eventcode[lever + 1] == 'LightOn1' or eventcode[lever + 1] == 'LightOn2':
+            nogo_trials += 1
+        else:
+            go_trials += 1
+    return go_trials, nogo_trials

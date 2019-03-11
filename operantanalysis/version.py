@@ -29,30 +29,30 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
 description = "operantanalysis: project for analyzing operant conditioning data from Med-PC output"
 # Long description will go up on the pypi page
 long_description = """
-OperantParadigmAnalysis-Python
+OperantBehaviorAnalysis-Python
 ========
-OperantParadigmAnalysis-Python is a project in the Nautiyal Lab at Dartmouth college for writing operant paradigm analysis scripts 
+OperantBehaviorAnalysis-Python is a project in the Nautiyal Lab at Dartmouth college for writing operant paradigm analysis scripts 
 for Med-PC output files. This project works toward analyzing mouse behavior in various experimental groups across days, as well as in
 varying paradigms.
 License
 =======
-``OperantParadigmAnalysis-Python`` is licensed under the terms of the MIT license. See the file
+``OperantBehaviorAnalysis-Python`` is licensed under the terms of the MIT license. See the file
 "LICENSE" for information on the history of this software, terms & conditions
 for usage, and a DISCLAIMER OF ALL WARRANTIES.
 All trademarks referenced herein are property of their respective holders.
-Copyright (c) 2018, Contributors
+Copyright (c) 2019, Contributors
 Contributors:
 Stephanie Desrochers
 Jun Ho Lee
 Katherine Nautiyal, PhD
 """
 
-NAME = "OperantParadigmAnalysis-Python"
+NAME = "OperantBehaviorAnalysis-Python"
 MAINTAINER = "Stephanie Desrochers"
 MAINTAINER_EMAIL = "desrochers.stephanie@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
-URL = "http://github.com/NautiyalLab/OperantParadigmAnalysis-Python/"
+URL = "http://github.com/NautiyalLab/OperantBehaviorAnalysis-Python/"
 DOWNLOAD_URL = ""
 LICENSE = "MIT"
 AUTHOR = "Stephanie Desrochers"
