@@ -6,8 +6,7 @@ __all__ = ["load_file", "extract_info_from_file", "reward_retrieval", "cue_iti_r
 
 def load_file(filename):
     """
-
-    :param filename: string that refers to operant file location
+    :param filename: string that refers to single operant file location, file is txt
     :return: dictionary of all the fields and their values contained in the file (like subject, group, or w array)
     """
     with open(filename, "r") as fileref:
@@ -23,32 +22,39 @@ def load_file(filename):
         elif line[0] == ' ':
             fields_dictionary[name] += line
             fields_dictionary[name] = fields_dictionary[name].replace('\n', '')
-            
+    group_identities = fields_dictionary['Group'].split('/')
+    fields_dictionary['Group'] = group_identities.pop(0)
+    for remaining in group_identities:
+        next_group = remaining.split(':')
+        fields_dictionary[next_group[0]] = next_group[1]
+
     return fields_dictionary
 
 
 def extract_info_from_file(dictionary_from_file, time_conversion):
     """
-
     :param dictionary_from_file: dictionary of all the fields and their values contained in the file (like subject, group, or w array)
     :param time_conversion: conversion number the timecode needs to be divided by to get seconds
     :return: timecode and eventcode lists derived from the w array
     """
     time_event_codes = dictionary_from_file["W"].split()
+
     for num in time_event_codes:
         if ':' in num:
             time_event_codes.remove(num)
+    for num in time_event_codes:
+        time_event_codes[time_event_codes.index(num)] = str(int(float(num)))
 
     timecode = []
     eventcode = []
-    first_timecode = (float(time_event_codes[0][:-6]) / time_conversion)
+    first_timecode = (float(time_event_codes[0][:-4]) / time_conversion)
 
     for num in time_event_codes:
         if num == time_event_codes[0]:
             timecode += [0.0]
         else:
-            timecode += [round((float(num[:-6]) / time_conversion) - first_timecode, 2)]
-        eventcode += [eventcodes_dictionary[int(num[-6:-2])]]
+            timecode += [round((float(num[:-4]) / time_conversion) - first_timecode, 2)]
+        eventcode += [eventcodes_dictionary[int(num[-4:])]]
 
     return timecode, eventcode
 
