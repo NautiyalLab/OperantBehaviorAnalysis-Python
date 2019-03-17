@@ -158,7 +158,7 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
             press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
             break
         else:
-            None
+            pass
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
