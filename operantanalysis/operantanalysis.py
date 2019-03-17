@@ -1,6 +1,6 @@
 import statistics
 from .eventcodes import eventcodes_dictionary
-__all__ = ["load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding", "lever_pressing", 
+__all__ = ["load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding", "lever_pressing",
            "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials"]
 
 
