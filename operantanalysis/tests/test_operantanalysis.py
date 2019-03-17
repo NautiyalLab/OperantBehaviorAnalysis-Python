@@ -7,6 +7,10 @@ def test_load_files():
     assert "W" in dictionary
     assert "Subject" in dictionary
     assert len(dictionary) == 12
+    (dictionary2) = load_file("../operantanalysis/sampledata/!2014-01-31_11h16m.Subject 818.txt")
+    assert "W" in dictionary2
+    assert "Subject" in dictionary2
+    assert len(dictionary2) == 14
     
     
 def test_extract_info_from_file():
