@@ -1,13 +1,12 @@
 import statistics
 from .eventcodes import eventcodes_dictionary
-__all__ = ["load_file", "extract_info_from_file", "reward_retrieval", "cue_iti_responding", "lever_pressing", "lever_press_latency",
-           "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials"]
+__all__ = ["load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding", "lever_pressing",
+           "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials"]
 
 
 def load_file(filename):
     """
-
-    :param filename: string that refers to operant file location
+    :param filename: string that refers to single operant file location, file is txt
     :return: dictionary of all the fields and their values contained in the file (like subject, group, or w array)
     """
     with open(filename, "r") as fileref:
@@ -23,47 +22,62 @@ def load_file(filename):
         elif line[0] == ' ':
             fields_dictionary[name] += line
             fields_dictionary[name] = fields_dictionary[name].replace('\n', '')
-            
+    group_identities = fields_dictionary['Group'].split('/')
+    fields_dictionary['Group'] = group_identities.pop(0)
+    for remaining in group_identities:
+        next_group = remaining.split(':')
+        fields_dictionary[next_group[0]] = next_group[1]
+
     return fields_dictionary
 
 
 def extract_info_from_file(dictionary_from_file, time_conversion):
     """
-
     :param dictionary_from_file: dictionary of all the fields and their values contained in the file (like subject, group, or w array)
     :param time_conversion: conversion number the timecode needs to be divided by to get seconds
     :return: timecode and eventcode lists derived from the w array
     """
     time_event_codes = dictionary_from_file["W"].split()
+
     for num in time_event_codes:
         if ':' in num:
             time_event_codes.remove(num)
+    for num in time_event_codes:
+        time_event_codes[time_event_codes.index(num)] = str(int(float(num)))
 
     timecode = []
     eventcode = []
-    first_timecode = (float(time_event_codes[0][:-6]) / time_conversion)
+    first_timecode = (float(time_event_codes[0][:-4]) / time_conversion)
 
     for num in time_event_codes:
         if num == time_event_codes[0]:
             timecode += [0.0]
         else:
-            timecode += [round((float(num[:-6]) / time_conversion) - first_timecode, 2)]
-        eventcode += [eventcodes_dictionary[int(num[-6:-2])]]
+            timecode += [round((float(num[:-4]) / time_conversion) - first_timecode, 2)]
+        eventcode += [eventcodes_dictionary[int(num[-4:])]]
 
     return timecode, eventcode
 
 
+def get_events_indices(eventcode, eventtypes):
+    """
+    :param eventcode: list of event codes from operant conditioning file
+    :param eventtypes: list of event types to index
+    :return: list of indices of target events
+    """
+    return [i for i, event in enumerate(eventcode) if event in eventtypes]
+
+
 def reward_retrieval(timecode, eventcode):
     """
-
     :param timecode: list of time codes from operant conditioning file
     :param eventcode: list of event codes from operant conditioning file
     :return: number of reinforcers (dippers) presented, number retrieved, and latency to retrieve as floats
     """
-    dip_on = [i for i, event in enumerate(eventcode) if event == 'DipOn']
-    dip_off = [i for i, event in enumerate(eventcode) if event == 'DipOff' or event == 'EndSession']
-    poke_on = [i for i, event in enumerate(eventcode) if event == 'PokeOn1']
-    poke_off = [i for i, event in enumerate(eventcode) if event == 'PokeOff1']
+    dip_on = get_events_indices(eventcode, ['DipOn'])
+    dip_off = get_events_indices(eventcode, ['DipOff', 'EndSession'])
+    poke_on = get_events_indices(eventcode, ['PokeOn1'])
+    poke_off = get_events_indices(eventcode, ['PokeOff1'])
     dips_retrieved = 0
     latency_dip_retrieval = []
 
@@ -80,22 +94,21 @@ def reward_retrieval(timecode, eventcode):
                 poke_during_dip_idx = eventcode[dip_on_idx:dip_off_idx].index('PokeOn1')
                 latency_dip_retrieval += [round(timecode[poke_during_dip_idx + dip_on_idx] - timecode[dip_on_idx], 2)]
                 break
-                
+
     return len(dip_on), dips_retrieved, round(statistics.mean(latency_dip_retrieval), 3)
 
 
 def cue_iti_responding(timecode, eventcode, code_on, code_off):
     """
-
     :param timecode: list of time codes from operant conditioning file
     :param eventcode: list of event codes from operant conditioning file
     :param code_on: event code for the beginning of a cue
     :param code_off: event code for the end of a cue
     :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
     """
-    cue_on = [i for i, event in enumerate(eventcode) if event == code_on]
-    cue_off = [i for i, event in enumerate(eventcode) if event == code_off]
-    iti_on = [i for i, event in enumerate(eventcode) if event == code_off or event == 'StartSession']
+    cue_on = get_events_indices(eventcode, [code_on])
+    cue_off = get_events_indices(eventcode, [code_off])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
     all_poke_rpm = []
     all_poke_iti_rpm = []
 
@@ -118,7 +131,6 @@ def cue_iti_responding(timecode, eventcode, code_on, code_off):
 
 def lever_pressing(eventcode, lever1, lever2=False):
     """
-
     :param eventcode: list of event codes from operant conditioning file
     :param lever1: eventcode for lever pressing
     :param lever2: optional parameter for second lever eventcode if two levers are used
@@ -136,14 +148,13 @@ def lever_pressing(eventcode, lever1, lever2=False):
 
 def lever_press_latency(timecode, eventcode, lever_on, lever_press):
     """
-
     :param timecode: list of times (in seconds) when events occurred
     :param eventcode: list of events that happened in a session
     :param leveron: event name for lever presentation
     :param leverpress: event name for lever press
     :return: the mean latency to press the lever in seconds
     """
-    lever_on = [i for i, event in enumerate(eventcode) if event == lever_on or event == 'EndSession']
+    lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
     press_latency = []
     for i in range(len(lever_on) - 1):
         lever_on_idx = lever_on[i]
@@ -152,7 +163,7 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
             press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
             break
         else:
-            None
+            pass
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
@@ -161,7 +172,6 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
 
 def total_head_pokes(eventcode):
     """
-
     :param eventcode: list of event codes from operant conditioning file
     :return: total number of times animal poked head into reward receptacle
     """
@@ -170,7 +180,6 @@ def total_head_pokes(eventcode):
 
 def num_successful_go_nogo_trials(eventcode):
     """
-
     :param eventcode: list of event codes from operant conditioning file
     :return: number of successful go and no go trials in the go/no go tasks
     """
@@ -179,14 +188,13 @@ def num_successful_go_nogo_trials(eventcode):
 
 def count_go_nogo_trials(eventcode):
     """
-
     :param eventcode: list of event codes from operant conditioning file
     :return: number of go and no go trials in the go/no go tasks
     """
-    lever_on = [i for i, event in enumerate(eventcode) if event == 'RLeverOn' or event == 'LLeverOn']
+    lever_on = get_events_indices(eventcode, ['RLeverOn', 'LLeverOn'])
     (go_trials, nogo_trials) = (0, 0)
     for lever in lever_on:
-        if eventcode[lever + 1] == 'LightOn1' or eventcode[lever + 1] == 'LightOn2':
+        if eventcode[lever + 1] in ('LightOn1', 'LightOn2'):
             nogo_trials += 1
         else:
             go_trials += 1
