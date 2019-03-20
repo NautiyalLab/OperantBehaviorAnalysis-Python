@@ -1,36 +1,31 @@
-from operantanalysis import load_file, extract_info_from_file, reward_retrieval, lever_pressing, lever_press_latency
-import glob
-from tkinter import filedialog
-from tkinter import *  # noqa
+from operantanalysis import import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, lever_press_latency
 import pandas as pd
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
 
-days = int(input("How many days would you like to analyze?"))
 column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
                'Lever Presses', 'Lever Press Latency']
-df = pd.DataFrame(columns=column_list)
 
 
-for i in range(days):
-    root = Tk()  # noqa
-    root.withdraw()
-    folder_selected = filedialog.askdirectory()
-    x = folder_selected + '/*'
+def crf_function(loaded_file, i):
+  
+    (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
+    (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
+    (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
+    
+    if 'LLeverOn' in eventcode:
+        press_latency = lever_press_latency(timecode, eventcode, 'LLeverOn', 'LPressOn')
+    elif 'RLeverOn' in eventcode:
+        press_latency = lever_press_latency(timecode, eventcode, 'RLeverOn', 'RPressOn')
+        
+    df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers), float(dippers_retrieved),
+                         float(retrieval_latency), float(total_presses), float(press_latency)]], columns=column_list)
+    
+    return df2
 
-    for file in sorted(glob.glob(x)):
-        loaded_file = load_file(file)
-        (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
-        (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
-        (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
-        if 'LLeverOn' in eventcode:
-            press_latency = lever_press_latency(timecode, eventcode, 'LLeverOn', 'LPressOn')
-        elif 'RLeverOn' in eventcode:
-            press_latency = lever_press_latency(timecode, eventcode, 'RLeverOn', 'RPressOn')
-        df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers), float(dippers_retrieved),
-                             float(retrieval_latency), float(total_presses), float(press_latency)]], columns=column_list)
-        df = df.append(df2, ignore_index=True)
+
+(days, df) = loop_over_days(column_list, crf_function)
 
 group_means = df.groupby(['Day'])['Dippers', 'Lever Presses', 'Lever Press Latency'].mean().unstack()
 group_sems = df.groupby(['Day'])['Dippers', 'Lever Presses', 'Lever Press Latency'].sem().unstack()
