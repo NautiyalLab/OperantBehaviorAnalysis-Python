@@ -257,9 +257,9 @@ def bin_by_time(timecode, eventcode, bin_length, counted_event):
 
     for i in range(num_bins):
         for event_on in event_on_list:
-            if (i+1) != num_bins and (i+1) * bin_length > timecode[event_on] >= i * bin_length:
+            if (i + 1) != num_bins and (i + 1) * bin_length > timecode[event_on] >= i * bin_length:
                 counts_for_each_bin[i] += 1
-            elif (i+1) == num_bins and timecode[event_on] >= i * bin_length:
+            elif (i + 1) == num_bins and timecode[event_on] >= i * bin_length:
                 counts_for_each_bin[i] += 1
 
     return counts_for_each_bin
