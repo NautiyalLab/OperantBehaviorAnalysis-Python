@@ -20,7 +20,7 @@ def habit_training_function(loaded_file, i):
 
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['Sex'], int(i + 1), loaded_file['Training'],
                          float(dippers), float(dippers_retrieved), float(retrieval_latency), float(total_presses)]],
-                         columns=column_list)
+                       columns=column_list)
 
     return df2
 
