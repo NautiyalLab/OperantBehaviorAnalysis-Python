@@ -1,4 +1,4 @@
-from operantanalysis import import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, lever_press_latency
+from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, lever_press_latency
 import pandas as pd
 import matplotlib
 matplotlib.use("TkAgg")
