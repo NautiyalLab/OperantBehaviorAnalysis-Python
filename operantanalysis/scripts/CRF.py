@@ -9,7 +9,11 @@ column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Late
 
 
 def crf_function(loaded_file, i):
-  
+    """
+    :param loaded_file: file output from operant box 
+    :param i: number of days analyzing
+    :return: data frame of all analysis extracted from file (one animal)
+    """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
     (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
