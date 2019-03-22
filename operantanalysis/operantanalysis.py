@@ -243,10 +243,10 @@ def bin_by_time(timecode, eventcode, bin_length, counted_event):
     :param timecode: list of time codes from operant conditioning file
     :param eventcode: list of event codes from operant conditioning file
     :param bin_length: length of time in seconds to split the session into
-    :param counted_event: event that is counted in each bin
+    :param counted_event: event that is counted in each bin, in list format
     :return: a list of counts of specified event for each bin
     """
-    event_on_list = get_events_indices(eventcode, [counted_event])
+    event_on_list = get_events_indices(eventcode, counted_event)
 
     if timecode[-1] % bin_length != 0:
         num_bins = int(timecode[-1] // bin_length) + 1
