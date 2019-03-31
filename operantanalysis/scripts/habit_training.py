@@ -1,32 +1,31 @@
-from operantanalysis import load_file, extract_info_from_file, reward_retrieval, lever_pressing
-import glob
-from tkinter import filedialog
-from tkinter import *  # noqa
+from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing
 import pandas as pd
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
 
-days = int(input("How many days would you like to analyze?"))
 column_list = ['Subject', 'Sex', 'Day', 'Training', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
                'Lever Presses']
-df = pd.DataFrame(columns=column_list)
 
 
-for i in range(days):
-    root = Tk()  # noqa
-    root.withdraw()
-    folder_selected = filedialog.askdirectory()
-    x = folder_selected + '/*'
+def habit_training_function(loaded_file, i):
+    """
+    :param loaded_file: file output from operant box
+    :param i: number of days analyzing
+    :return: data frame of all analysis extracted from file (one animal)
+    """
+    (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
+    (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
+    (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
 
-    for file in sorted(glob.glob(x)):
-        loaded_file = load_file(file)
-        (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
-        (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
-        (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
-        df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['Sex'], int(i + 1), loaded_file['Training'],
-                             float(dippers), float(dippers_retrieved), float(retrieval_latency), float(total_presses)]], columns=column_list)
-        df = df.append(df2, ignore_index=True)
+    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['Sex'], int(i + 1), loaded_file['Training'],
+                         float(dippers), float(dippers_retrieved), float(retrieval_latency), float(total_presses)]],
+                       columns=column_list)
+
+    return df2
+
+
+(days, df) = loop_over_days(column_list, habit_training_function)
 
 group_means = df.groupby(['Day', 'Training'])['Dippers', 'Lever Presses'].mean().unstack()
 group_sems = df.groupby(['Day', 'Training'])['Dippers', 'Lever Presses'].sem().unstack()

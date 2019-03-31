@@ -64,7 +64,7 @@ The final goal will be to graph the computed analysis.
 - If they resond early, the wait period starts over
 - measures needed: total head pokes, total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, lever to dipper ratio, peak mode latencies, histogram of lever press latencies (binned by 3 seconds)
 ### Habit
-- Current testing schedule: VI30 (3 days), VI60 (3/6/9 days), Extinction, Reaquisition (VI60), Devaluation (3 days, day off in between session), Extinction 2, Reaquisition 2 (VI60) 
+- Current testing schedule: VI30 (3 days), VI60 (3/6/9 days), Extinction, Reaquisition (VI60), Devaluation, Extinction 2, Reaquisition 2 (VI60) 
 #### Training
 - Trained using a random interval schedule
 - measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses
@@ -75,5 +75,6 @@ The final goal will be to graph the computed analysis.
 - Random interval schedule again
 - measures needed: total dippers, dippers retrieved, latency to retrieve dipper, total lever presses, rate of lever pressing (binned by 5 minutes)
 #### Devaluation
-- Animals are given LiCl and receive randomly delivered rewards (1 hour total)
+- Animals receive randomly delivered rewards (20 minutes), given LiCl, then placed back in context (20 minutes)
+- Reward delivery is the same as TT2, so that analysis can be used here
 ### Visualization of Session

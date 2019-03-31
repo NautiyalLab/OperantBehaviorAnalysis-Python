@@ -1,7 +1,36 @@
 import statistics
+import os
+import glob
+from tkinter import filedialog
+from tkinter import *  # noqa
+import pandas as pd
 from .eventcodes import eventcodes_dictionary
-__all__ = ["load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding", "lever_pressing",
-           "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials"]
+
+__all__ = ["loop_over_days", "load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding",
+           "lever_pressing", "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials",
+           "bin_by_time"]
+
+
+def loop_over_days(column_list, behavioral_test_function):
+    """
+    :param column_list: list of strings/column titles for analysis that will be output in a table
+    :param behavioral_test_function: function that contains all the analysis functions to run on each file
+    :return: one concatenated data table of analysis for each animal for each day specified
+    """
+    days = int(input("How many days would you like to analyze?"))
+    df = pd.DataFrame(columns=column_list)
+
+    for i in range(days):
+        root = Tk()  # noqa
+        root.withdraw()
+        folder_selected = filedialog.askdirectory()
+        file_pattern = os.path.join(folder_selected, '*')
+        for file in sorted(glob.glob(file_pattern)):
+            loaded_file = load_file(file)
+            df2 = behavioral_test_function(loaded_file, i)
+            df = df.append(df2, ignore_index=True)
+
+    return days, df
 
 
 def load_file(filename):
@@ -13,6 +42,7 @@ def load_file(filename):
         filelines = fileref.readlines()
 
     fields_dictionary = {}
+    
     for line in filelines:
         if line[0] != ' ' and line[0] != '\n':
             name = line.split(':')[0]
@@ -22,8 +52,10 @@ def load_file(filename):
         elif line[0] == ' ':
             fields_dictionary[name] += line
             fields_dictionary[name] = fields_dictionary[name].replace('\n', '')
+            
     group_identities = fields_dictionary['Group'].split('/')
     fields_dictionary['Group'] = group_identities.pop(0)
+    
     for remaining in group_identities:
         next_group = remaining.split(':')
         fields_dictionary[next_group[0]] = next_group[1]
@@ -137,10 +169,12 @@ def lever_pressing(eventcode, lever1, lever2=False):
     :return: count of first lever presses, second lever presses, and total lever presses, as int
     """
     lever1_presses = eventcode.count(lever1)
+           
     if lever2:
         lever2_presses = eventcode.count(lever2)
     else:
         lever2_presses = 0
+
     total_lever_presses = lever1_presses + lever2_presses
 
     return lever1_presses, lever2_presses, total_lever_presses
@@ -156,6 +190,7 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
     """
     lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
     press_latency = []
+
     for i in range(len(lever_on) - 1):
         lever_on_idx = lever_on[i]
         if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
@@ -167,7 +202,7 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
-        return "No presses"
+        return 'No presses'
 
 
 def total_head_pokes(eventcode):
@@ -175,7 +210,7 @@ def total_head_pokes(eventcode):
     :param eventcode: list of event codes from operant conditioning file
     :return: total number of times animal poked head into reward receptacle
     """
-    return eventcode.count("PokeOn1")
+    return eventcode.count('PokeOn1')
 
 
 def num_successful_go_nogo_trials(eventcode):
@@ -193,9 +228,38 @@ def count_go_nogo_trials(eventcode):
     """
     lever_on = get_events_indices(eventcode, ['RLeverOn', 'LLeverOn'])
     (go_trials, nogo_trials) = (0, 0)
+
     for lever in lever_on:
         if eventcode[lever + 1] in ('LightOn1', 'LightOn2'):
             nogo_trials += 1
         else:
             go_trials += 1
+                      
     return go_trials, nogo_trials
+
+
+def bin_by_time(timecode, eventcode, bin_length, counted_event):
+    """
+    :param timecode: list of time codes from operant conditioning file
+    :param eventcode: list of event codes from operant conditioning file
+    :param bin_length: length of time in seconds to split the session into
+    :param counted_event: event that is counted in each bin, in list format
+    :return: a list of counts of specified event for each bin
+    """
+    event_on_list = get_events_indices(eventcode, counted_event)
+
+    if timecode[-1] % bin_length != 0:
+        num_bins = int(timecode[-1] // bin_length) + 1
+    elif timecode[-1] % bin_length == 0:
+        num_bins = int(timecode[-1] // bin_length)
+
+    counts_for_each_bin = [0] * num_bins
+
+    for i in range(num_bins):
+        for event_on in event_on_list:
+            if (i + 1) != num_bins and (i + 1) * bin_length > timecode[event_on] >= i * bin_length:
+                counts_for_each_bin[i] += 1
+            elif (i + 1) == num_bins and timecode[event_on] >= i * bin_length:
+                counts_for_each_bin[i] += 1
+
+    return counts_for_each_bin

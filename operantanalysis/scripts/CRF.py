@@ -1,4 +1,4 @@
-from operantanalysis import import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, lever_press_latency
+from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, lever_press_latency
 import pandas as pd
 import matplotlib
 matplotlib.use("TkAgg")
@@ -10,7 +10,7 @@ column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Late
 
 def crf_function(loaded_file, i):
     """
-    :param loaded_file: file output from operant box 
+    :param loaded_file: file output from operant box
     :param i: number of days analyzing
     :return: data frame of all analysis extracted from file (one animal)
     """
