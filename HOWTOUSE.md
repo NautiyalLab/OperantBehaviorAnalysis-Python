@@ -1,6 +1,8 @@
 # OperantBehaviorAnalysis-Python
 For ease of use, this document describes helpful applications for interacting with and running scripts in this repository.
 
+Before beginning, make a GitHub account (send Stephanie a message with your account name and she'll add you to the lab GitHub), and make sure git is installed on your computer: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git.
+
 First of all, fork this repository to your personal GitHub. I recommend creating working branches for yourself rather than working directly in master. 
 You can also periodically update this fork by pulling changes from the original repository into your fork.
 
