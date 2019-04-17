@@ -41,7 +41,7 @@ def test_lever_pressing():
 
 def test_lever_press_latency():
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 1
-    assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'PokeOn1', 'EndSession'], 'LPressOn', 'RPressOn') == "No presses"
+    assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'PokeOn1', 'EndSession'], 'LPressOn', 'RPressOn') == 0
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 0, 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 2
 
     
