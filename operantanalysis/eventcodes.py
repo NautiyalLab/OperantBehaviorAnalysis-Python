@@ -88,12 +88,14 @@ eventcodes_dictionary = {
     1306: 'PokeOnCtrl',
     1401: 'ActivePress',
     1402: 'InactivePress',
-    1501: 'NoiseTrialStart',
-    1502: 'NoiseTrialEnd',
-    1503: 'LightTrialStart',
-    1504: 'LightTrialEnd',
-    1505: 'LightLevTrialStart',
-    1506: 'LightLevTrialEnd',
-    1507: 'LevTrialStart',
-    1508: 'LevTrialEnd'
+    1501: 'ExictorBTrialStart',
+    1502: 'ExictorBTrialEnd',
+    1503: 'ExictorATrialStart',
+    1504: 'ExictorATrialEnd',
+    1505: 'AInhibitorTrialStart',
+    1506: 'AInhibitorTrialEnd',
+    1507: 'InhibitorTrialStart',
+    1508: 'InhibitorTrialEnd',
+    1509: 'BInhibitorTrialStart',
+    1510: 'BInhibitorTrialEnd'
 }
