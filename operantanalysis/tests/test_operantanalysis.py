@@ -28,9 +28,9 @@ def test_reward_retrieval():
 
 
 def test_cue_iti_responding():
-    assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'PokeOn1', 'LPressOn', 'PokeOn1', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn') == (30.0, 30.0)
-    assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'LPressOn', 'PokeOn1', 'PokeOn1', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn') == (40.0, 0.0)
-    assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn') == (0.0, 60.0)
+    assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'PokeOn1', 'LPressOn', 'PokeOn1', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn', 'PokeOn1') == (30.0, 30.0)
+    assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'LPressOn', 'PokeOn1', 'PokeOn1', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn', 'PokeOn1') == (40.0, 0.0)
+    assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn', 'PokeOn1') == (0.0, 60.0)
 
 
 def test_lever_pressing():
@@ -41,7 +41,7 @@ def test_lever_pressing():
 
 def test_lever_press_latency():
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 1
-    assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'PokeOn1', 'EndSession'], 'LPressOn', 'RPressOn') == "No presses"
+    assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'PokeOn1', 'EndSession'], 'LPressOn', 'RPressOn') == 0
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 0, 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 2
 
     

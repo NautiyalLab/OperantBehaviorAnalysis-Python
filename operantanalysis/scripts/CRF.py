@@ -30,6 +30,7 @@ def crf_function(loaded_file, i):
 
 
 (days, df) = loop_over_days(column_list, crf_function)
+print(df.to_string())
 
 group_means = df.groupby(['Day'])['Dippers', 'Lever Presses', 'Lever Press Latency'].mean().unstack()
 group_sems = df.groupby(['Day'])['Dippers', 'Lever Presses', 'Lever Press Latency'].sem().unstack()
