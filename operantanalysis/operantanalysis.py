@@ -57,8 +57,9 @@ def load_file(filename):
     fields_dictionary['Group'] = group_identities.pop(0)
     
     for remaining in group_identities:
-        next_group = remaining.split(':')
-        fields_dictionary[next_group[0]] = next_group[1]
+        if ':' in remaining:
+            next_group = remaining.split(':')
+            fields_dictionary[next_group[0]] = next_group[1]
 
     return fields_dictionary
 
