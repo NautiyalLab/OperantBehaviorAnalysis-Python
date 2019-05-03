@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
 
-column_list = ['Subject', 'Sex', 'Day', 'Training', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
+column_list = ['Subject', 'Day', 'Training', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
                'Lever Presses']
 
 
@@ -18,7 +18,7 @@ def habit_training_function(loaded_file, i):
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
     (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
 
-    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['Sex'], int(i + 1), loaded_file['Training'],
+    df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), loaded_file['Training'],
                          float(dippers), float(dippers_retrieved), float(retrieval_latency), float(total_presses)]],
                        columns=column_list)
 
