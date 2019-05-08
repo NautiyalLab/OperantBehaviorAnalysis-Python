@@ -30,6 +30,7 @@ def crf_function(loaded_file, i):
 
 
 (days, df) = loop_over_days(column_list, crf_function)
+print(df.to_string())
 
 group_means = df.groupby(['Day'])['Dippers', 'Lever Presses', 'Lever Press Latency'].mean().unstack()
 group_sems = df.groupby(['Day'])['Dippers', 'Lever Presses', 'Lever Press Latency'].sem().unstack()
@@ -40,7 +41,7 @@ group_means['Lever Presses'].plot(legend=True, yerr=group_sems['Lever Presses'],
 plt.ylabel('Lever Presses')
 
 plt.subplot(132)
-group_means['Lever Press Latency'].plot(legend=True, yerr=group_sems['Lever Press Latency'], ylim=[0, 300],
+group_means['Lever Press Latency'].plot(legend=True, yerr=group_sems['Lever Press Latency'],
                                         xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
 plt.ylabel('Lever Press Latency (sec)')
 

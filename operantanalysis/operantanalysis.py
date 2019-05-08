@@ -8,7 +8,7 @@ from .eventcodes import eventcodes_dictionary
 
 __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding",
            "lever_pressing", "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials",
-           "bin_by_time"]
+           "bin_by_time", "binned_responding", "cue_responding_duration"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -57,8 +57,9 @@ def load_file(filename):
     fields_dictionary['Group'] = group_identities.pop(0)
     
     for remaining in group_identities:
-        next_group = remaining.split(':')
-        fields_dictionary[next_group[0]] = next_group[1]
+        if ':' in remaining:
+            next_group = remaining.split(':')
+            fields_dictionary[next_group[0]] = next_group[1]
 
     return fields_dictionary
 
@@ -127,10 +128,13 @@ def reward_retrieval(timecode, eventcode):
                 latency_dip_retrieval += [round(timecode[poke_during_dip_idx + dip_on_idx] - timecode[dip_on_idx], 2)]
                 break
 
-    return len(dip_on), dips_retrieved, round(statistics.mean(latency_dip_retrieval), 3)
+    if dips_retrieved == 0:
+        return len(dip_on), dips_retrieved, 0
+    else:
+        return len(dip_on), dips_retrieved, round(statistics.mean(latency_dip_retrieval), 3)
 
 
-def cue_iti_responding(timecode, eventcode, code_on, code_off):
+def cue_iti_responding(timecode, eventcode, code_on, code_off, counted_behavior):
     """
     :param timecode: list of time codes from operant conditioning file
     :param eventcode: list of event codes from operant conditioning file
@@ -149,16 +153,85 @@ def cue_iti_responding(timecode, eventcode, code_on, code_off):
         cue_off_idx = cue_off[i]
         iti_on_idx = iti_on[i]
         cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
-        poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count('PokeOn1')) / (cue_length_sec / 60))
+        poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count(counted_behavior)) / (cue_length_sec / 60))
         all_poke_rpm += [poke_rpm]
         iti_poke = 0
         for x in range(iti_on_idx, cue_on_idx):
-            if eventcode[x] == 'PokeOn1' and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
+            if eventcode[x] == counted_behavior and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
                 iti_poke += 1
         iti_poke_rpm = iti_poke / (cue_length_sec / 60)
         all_poke_iti_rpm += [iti_poke_rpm]
 
     return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3)
+
+
+def binned_responding(timecode, eventcode, code_on, code_off, counted_behavior, trial_count):
+    """
+       :param timecode: list of time codes from operant conditioning file
+       :param eventcode: list of event codes from operant conditioning file
+       :param code_on: event code for the beginning of a cue
+       :param code_off: event code for the end of a cue
+       :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
+       """
+    cue_on = get_events_indices(eventcode, [code_on])
+    cue_off = get_events_indices(eventcode, [code_off])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
+    all_poke_rpm = []
+    all_poke_iti_rpm = []
+
+    for i in range(trial_count):
+        cue_on_idx = cue_on[i]
+        cue_off_idx = cue_off[i]
+        iti_on_idx = iti_on[i]
+        cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
+        poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count(counted_behavior)) / (cue_length_sec / 60))
+        all_poke_rpm += [poke_rpm]
+        iti_poke = 0
+        for x in range(iti_on_idx, cue_on_idx):
+            if eventcode[x] == counted_behavior and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
+                iti_poke += 1
+        iti_poke_rpm = iti_poke / (cue_length_sec / 60)
+        all_poke_iti_rpm += [iti_poke_rpm]
+
+    return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3)
+
+
+def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_behavior_on, counted_behavior_off):
+    """
+    :param timecode: list of time codes from operant conditioning file
+    :param eventcode: list of event codes from operant conditioning file
+    :param code_on: event code for the beginning of a cue
+    :param code_off: event code for the end of a cue
+    :param counted_behavior_off: event code for the beginning of target behavior
+    :param counted_behavior_on: event code for the end of target behavior
+    :return: mean duration of individual head pokes during cue, mean total duration of head poking during cue
+    """
+    cue_on = get_events_indices(eventcode, [code_on])
+    cue_off = get_events_indices(eventcode, [code_off])
+    all_poke_dur = []
+    all_cue_duration = []
+
+    for i in range(len(cue_on)):
+        cue_on_idx = cue_on[i]
+        cue_off_idx = cue_off[i]
+        in_cue_duration = 0
+
+        for x in range(cue_on_idx, cue_off_idx):
+            if eventcode[x-1] == code_on and eventcode[x] == counted_behavior_off:
+                poke_dur = timecode[x] - timecode[x-1]
+                all_poke_dur += [poke_dur]
+                in_cue_duration += poke_dur
+            elif eventcode[x] == code_off and eventcode[x-1] == code_on and eventcode[x+1] == counted_behavior_off:
+                poke_dur = timecode[x] - timecode[x - 1]
+                all_poke_dur += [poke_dur]
+                in_cue_duration += poke_dur
+            elif eventcode[x] == counted_behavior_on and (eventcode[x+1] == counted_behavior_off or eventcode[x+1] == code_off):
+                poke_dur = timecode[x+1] - timecode[x]
+                all_poke_dur += [poke_dur]
+                in_cue_duration += poke_dur
+        all_cue_duration += [in_cue_duration]
+
+    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3)
 
 
 def lever_pressing(eventcode, lever1, lever2=False):
@@ -202,7 +275,7 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
-        return 'No presses'
+        return 0
 
 
 def total_head_pokes(eventcode):

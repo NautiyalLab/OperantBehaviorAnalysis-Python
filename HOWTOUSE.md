@@ -10,6 +10,7 @@ You can also periodically update this fork by pulling changes from the original 
 #### Anaconda Navigator
 - This application allows you to create python environments which contain all the required packages for using this repository
 - Download the most recent version here: https://www.anaconda.com/distribution/#macos
+- If you have windows, make sure to go to the windows tab and download the graphical interface
 - Go to environments and create a new one with a useful name, in the latest version of Python
 - Install pytest, numpy, scipy, matplotlib, and pandas in that environment
 #### GitHub Desktop

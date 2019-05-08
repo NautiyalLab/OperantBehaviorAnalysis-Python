@@ -28,12 +28,12 @@ group_means = df.groupby(['Day'])['Dippers Retrieved', 'Retrieval Latency'].mean
 group_sems = df.groupby(['Day'])['Dippers Retrieved', 'Retrieval Latency'].sem()
 
 plt.subplot(121)
-group_means['Dippers Retrieved'].plot(legend=True, yerr=group_sems['Dippers Retrieved'], ylim=[0, 60], xlim=[0, days+1],
-                                      xticks=(range(1, days+1, 1)), marker='o', capsize=3, elinewidth=1)
+group_means['Dippers Retrieved'].plot(legend=True, yerr=group_sems['Dippers Retrieved'], ylim=[0, 60], xlim=[0, days + 1],
+                                      xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
 plt.ylabel('Dippers Retrieved')
 
 plt.subplot(122)
-group_means['Retrieval Latency'].plot(legend=True, yerr=group_sems['Retrieval Latency'], ylim=[0, 20], xlim=[0, days+1],
-                                      xticks=(range(1, days+1, 1)), marker='o', capsize=3, elinewidth=1)
+group_means['Retrieval Latency'].plot(legend=True, yerr=group_sems['Retrieval Latency'], xlim=[0, days + 1],
+                                      xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
 plt.ylabel('Retrieval Latency (sec)')
 plt.show()
