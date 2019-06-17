@@ -1,8 +1,6 @@
 from operantanalysis import loop_over_days, extract_info_from_file, cue_iti_responding, binned_responding
 import pandas as pd
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt  # noqa
+
 
 column_list = ['Subject', 'tts', 'Condition', 'Day', 'Noise Responding', 'Noise ITI', 'Inhibitor Trial Responding',
                'Inhibitor ITI', 'Noise Responding 5', 'Noise ITI 5', 'Inhibitor Trial Responding 5', 'Inhibitor ITI 5']
@@ -28,6 +26,7 @@ def CI_summation_function(loaded_file, i):
 
 (days, df) = loop_over_days(column_list, CI_summation_function)
 print(df.to_string())
+df.to_excel("output.xlsx")
 
 group_means = df.groupby(['Day', 'Condition'])['Noise Responding', 'Inhibitor Trial Responding', 'Noise Responding 5', 'Inhibitor Trial Responding 5'].mean()
 group_sems = df.groupby(['Day', 'Condition'])['Noise Responding', 'Inhibitor Trial Responding', 'Noise Responding 5', 'Inhibitor Trial Responding 5'].sem()
