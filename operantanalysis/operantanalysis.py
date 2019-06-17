@@ -140,6 +140,7 @@ def cue_iti_responding(timecode, eventcode, code_on, code_off, counted_behavior)
     :param eventcode: list of event codes from operant conditioning file
     :param code_on: event code for the beginning of a cue
     :param code_off: event code for the end of a cue
+    :param counted_behavior: event code for counted behavior
     :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
     """
     cue_on = get_events_indices(eventcode, [code_on])
@@ -171,6 +172,8 @@ def binned_responding(timecode, eventcode, code_on, code_off, counted_behavior, 
        :param eventcode: list of event codes from operant conditioning file
        :param code_on: event code for the beginning of a cue
        :param code_off: event code for the end of a cue
+       :param counted_behavior: event code for behavior you want counted
+       :param trial_count: number of bins
        :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
        """
     cue_on = get_events_indices(eventcode, [code_on])
@@ -257,8 +260,8 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
     """
     :param timecode: list of times (in seconds) when events occurred
     :param eventcode: list of events that happened in a session
-    :param leveron: event name for lever presentation
-    :param leverpress: event name for lever press
+    :param lever_on: event name for lever presentation
+    :param lever_press: event name for lever press
     :return: the mean latency to press the lever in seconds
     """
     lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
