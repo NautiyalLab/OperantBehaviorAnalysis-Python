@@ -1,8 +1,6 @@
-from operantanalysis import loop_over_days, extract_info_from_file, cue_iti_responding, binned_responding
+from operantanalysis import loop_over_days, extract_info_from_file, cue_iti_responding
 import pandas as pd
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt  # noqa
+
 
 column_list = ['Subject', 'tts', 'Condition', 'Day', 'Light Responding', 'Light ITI']
 
@@ -23,6 +21,7 @@ def CI_retardation_function(loaded_file, i):
 
 (days, df) = loop_over_days(column_list, CI_retardation_function)
 print(df.to_string())
+df.to_excel("output.xlsx")
 
 group_means = df.groupby(['Day', 'Condition'])['Light Responding'].mean()
 group_sems = df.groupby(['Day', 'Condition'])['Light Responding'].sem()
