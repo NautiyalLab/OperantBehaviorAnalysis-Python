@@ -1,8 +1,6 @@
 from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, cue_iti_responding
 import pandas as pd
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt  # noqa
+
 
 column_list = ['Subject', 'tts', 'Condition', 'Day', 'Click Responding', 'Click ITI',
                'Noise Responding', 'Noise ITI', 'Inhibitor Trial Responding', 'Inhibitor ITI', 'Dippers',
@@ -32,6 +30,7 @@ def CI_training_function(loaded_file, i):
 (days, df) = loop_over_days(column_list, CI_training_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
+
 group_means = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding', 'Inhibitor Trial Responding'].mean()
 group_sems = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding', 'Inhibitor Trial Responding'].sem()
 
