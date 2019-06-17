@@ -220,16 +220,16 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
         in_cue_duration = 0
 
         for x in range(cue_on_idx, cue_off_idx):
-            if eventcode[x-1] == code_on and eventcode[x] == counted_behavior_off:
-                poke_dur = timecode[x] - timecode[x-1]
-                all_poke_dur += [poke_dur]
-                in_cue_duration += poke_dur
-            elif eventcode[x] == code_off and eventcode[x-1] == code_on and eventcode[x+1] == counted_behavior_off:
+            if eventcode[x - 1] == code_on and eventcode[x] == counted_behavior_off:
                 poke_dur = timecode[x] - timecode[x - 1]
                 all_poke_dur += [poke_dur]
                 in_cue_duration += poke_dur
-            elif eventcode[x] == counted_behavior_on and (eventcode[x+1] == counted_behavior_off or eventcode[x+1] == code_off):
-                poke_dur = timecode[x+1] - timecode[x]
+            elif eventcode[x] == code_off and eventcode[x - 1] == code_on and eventcode[x + 1] == counted_behavior_off:
+                poke_dur = timecode[x] - timecode[x - 1]
+                all_poke_dur += [poke_dur]
+                in_cue_duration += poke_dur
+            elif eventcode[x] == counted_behavior_on and (eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
+                poke_dur = timecode[x + 1] - timecode[x]
                 all_poke_dur += [poke_dur]
                 in_cue_duration += poke_dur
         all_cue_duration += [in_cue_duration]
