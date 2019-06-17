@@ -1,8 +1,6 @@
 from operantanalysis import loop_over_days, extract_info_from_file, cue_iti_responding, binned_responding
 import pandas as pd
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt  # noqa
+
 
 column_list = ['Subject', 'tts', 'Condition', 'Day', 'Noise Responding', 'Noise ITI', 'Inhibitor Trial Responding',
                'Inhibitor ITI', 'Noise Responding 5', 'Noise ITI 5', 'Inhibitor Trial Responding 5', 'Inhibitor ITI 5']
