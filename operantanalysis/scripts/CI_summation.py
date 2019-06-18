@@ -13,9 +13,9 @@ def CI_summation_function(loaded_file, i):
     :return: data frame of all analysis extracted from file (one animal)
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
-    (B_responding, B_iti) = cue_iti_responding(timecode, eventcode, 'ExictorBTrialStart', 'ExictorBTrialEnd', 'PokeOn1')
+    (B_responding, B_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1')
     (inhibitor_responding, inhibitor_iti) = cue_iti_responding(timecode, eventcode, 'BInhibitorTrialStart', 'BInhibitorTrialEnd', 'PokeOn1')
-    (B_responding_5, B_iti_5) = binned_responding(timecode, eventcode, 'ExictorBTrialStart', 'ExictorBTrialEnd', 'PokeOn1', 5)
+    (B_responding_5, B_iti_5) = binned_responding(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1', 5)
     (inhibitor_responding_5, inhibitor_iti_5) = binned_responding(timecode, eventcode, 'BInhibitorTrialStart', 'BInhibitorTrialEnd', 'PokeOn1', 5)
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], loaded_file['CI'], int(i + 1), float(B_responding),
                          float(B_iti), float(inhibitor_responding), float(inhibitor_iti), float(B_responding_5),

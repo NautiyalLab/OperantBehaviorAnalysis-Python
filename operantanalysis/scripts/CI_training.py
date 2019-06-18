@@ -15,8 +15,8 @@ def CI_training_function(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
-    (A_responding, A_iti) = cue_iti_responding(timecode, eventcode, 'ExictorATrialStart', 'ExictorATrialEnd', 'PokeOn1')
-    (B_responding, B_iti) = cue_iti_responding(timecode, eventcode, 'ExictorBTrialStart', 'ExictorBTrialEnd', 'PokeOn1')
+    (A_responding, A_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorATrialStart', 'ExcitorATrialEnd', 'PokeOn1')
+    (B_responding, B_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1')
     (inhibitor_responding, inhibitor_iti) = cue_iti_responding(timecode, eventcode, 'InhibitorTrialStart', 'InhibitorTrialEnd', 'PokeOn1')
 
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], loaded_file['MSN'], int(i + 1), float(A_responding),
