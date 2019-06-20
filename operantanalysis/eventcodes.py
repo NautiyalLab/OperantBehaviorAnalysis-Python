@@ -97,5 +97,17 @@ eventcodes_dictionary = {
     1507: 'InhibitorTrialStart',
     1508: 'InhibitorTrialEnd',
     1509: 'BInhibitorTrialStart',
-    1510: 'BInhibitorTrialEnd'
+    1510: 'BInhibitorTrialEnd',
+    771: 'LPokeOn',
+    770: 'LPokeOff',
+    2771: 'LSolOn',
+    2770: 'LSolOff',
+    10771: 'MPokeOn',
+    10770: 'MPokeOff',
+    12771: 'MSolOn',
+    12770: 'MSolOff',
+    20771: 'RPokeOn',
+    20770: 'RPokeOff',
+    22771: 'RSolOn',
+    22770: 'RSolOff'
 }
