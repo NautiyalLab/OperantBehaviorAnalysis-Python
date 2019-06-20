@@ -8,7 +8,7 @@ from .eventcodes import eventcodes_dictionary
 
 __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding",
            "lever_pressing", "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials",
-           "bin_by_time", "binned_responding", "cue_responding_duration"]
+           "bin_by_time", "binned_responding", "cue_responding_duration", "DNAMIC_extract_info_from_file"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -90,6 +90,26 @@ def extract_info_from_file(dictionary_from_file, time_conversion):
         eventcode += [eventcodes_dictionary[int(num[-4:])]]
 
     return timecode, eventcode
+
+
+def DNAMIC_extract_info_from_file(filename):
+    df = pd.read_csv(filename, sep=':', names=['event', 'timestamp'])
+    df['timestamp'] = df['timestamp'].str.strip()
+
+    # 0, 0, 0 appears after successful initialization --> serves as a cutoff mark
+
+    end_of_init_idx = df.loc[df['timestamp'] == '0'].index[-1]
+    body_start_idx = end_of_init_idx + 1
+
+    df_header = df[:body_start_idx]
+    df_body = df[body_start_idx:]
+
+    eventcode = df_body['event'].tolist()
+    eventcode = [eventcodes_dictionary[int(i)] for i in eventcode]
+    timecode = df_body['timestamp'].tolist()
+    timecode = [int(i) for i in timecode]
+
+    return eventcode, timecode
 
 
 def get_events_indices(eventcode, eventtypes):
