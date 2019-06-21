@@ -3,6 +3,7 @@ import pandas as pd
 
 column_list = ['Subject', 'Day', 'Left Pokes', 'RightPokes', 'Middle Pokes', 'Total Pokes']
 
+
 def DNAMIC_function(eventcode, timecode, fields_dictionary, i):
     """
     :param loaded_file: file output from operant box
