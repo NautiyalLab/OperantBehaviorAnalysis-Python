@@ -8,7 +8,7 @@ from .eventcodes import eventcodes_dictionary
 
 __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding",
            "lever_pressing", "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials",
-           "bin_by_time", "binned_responding", "cue_responding_duration", "DNAMIC_extract_info_from_file"]
+           "bin_by_time", "binned_responding", "cue_responding_duration", "DNAMIC_extract_info_from_file", "DNAMIC_loop_over_days"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -92,6 +92,28 @@ def extract_info_from_file(dictionary_from_file, time_conversion):
     return timecode, eventcode
 
 
+def DNAMIC_loop_over_days(column_list, behavioral_test_function):
+    """
+    :param column_list: list of strings/column titles for analysis that will be output in a table
+    :param behavioral_test_function: function that contains all the analysis functions to run on each file
+    :return: one concatenated data table of analysis for each animal for each day specified
+    """
+    days = int(input("How many days would you like to analyze?"))
+    df = pd.DataFrame(columns=column_list)
+
+    for i in range(days):
+        root = Tk()  # noqa
+        root.withdraw()
+        folder_selected = filedialog.askdirectory()
+        file_pattern = os.path.join(folder_selected, '*')
+        for file in sorted(glob.glob(file_pattern)):
+            (eventcode, timecode, fields_dictionary) = DNAMIC_extract_info_from_file(file)
+            df2 = behavioral_test_function(eventcode, timecode, fields_dictionary, i)
+            df = df.append(df2, ignore_index=True)
+
+    return days, df
+
+
 def DNAMIC_extract_info_from_file(filename):
     df = pd.read_csv(filename, sep=':', names=['event', 'timestamp'])
     df['timestamp'] = df['timestamp'].str.strip()
@@ -101,15 +123,18 @@ def DNAMIC_extract_info_from_file(filename):
     end_of_init_idx = df.loc[df['timestamp'] == '0'].index[-1]
     body_start_idx = end_of_init_idx + 1
 
-    df_header = df[:body_start_idx]
+    keys = df[:body_start_idx]['event'].tolist()
+    values = df[:body_start_idx]['timestamp'].tolist()
+    fields_dictionary = dict(zip(keys, values))
+
     df_body = df[body_start_idx:]
 
     eventcode = df_body['event'].tolist()
     eventcode = [eventcodes_dictionary[int(i)] for i in eventcode]
     timecode = df_body['timestamp'].tolist()
-    timecode = [int(i) for i in timecode]
+    timecode = [int(i)/1000 for i in timecode]
 
-    return eventcode, timecode
+    return eventcode, timecode, fields_dictionary
 
 
 def get_events_indices(eventcode, eventtypes):
@@ -260,7 +285,7 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
 def lever_pressing(eventcode, lever1, lever2=False):
     """
     :param eventcode: list of event codes from operant conditioning file
-    :param lever1: eventcode for lever pressing
+    :param lever1: eventcode for lever pressing or
     :param lever2: optional parameter for second lever eventcode if two levers are used
     :return: count of first lever presses, second lever presses, and total lever presses, as int
     """
