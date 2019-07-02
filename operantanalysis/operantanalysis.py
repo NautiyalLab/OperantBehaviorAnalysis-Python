@@ -252,17 +252,23 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
     :param code_off: event code for the end of a cue
     :param counted_behavior_off: event code for the beginning of target behavior
     :param counted_behavior_on: event code for the end of target behavior
-    :return: mean duration of individual head pokes during cue, mean total duration of head poking during cue
+    :return: mean duration of individual head pokes during cue, mean total duration of head poking during cue, also these for ITI preceeding cue
     """
     cue_on = get_events_indices(eventcode, [code_on])
     cue_off = get_events_indices(eventcode, [code_off])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
     all_poke_dur = []
+    all_iti_poke_dur = []
     all_cue_duration = []
+    all_iti_duration = []
 
     for i in range(len(cue_on)):
         cue_on_idx = cue_on[i]
         cue_off_idx = cue_off[i]
+        iti_on_idx = iti_on[i]
+        cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
         in_cue_duration = 0
+        iti_cue_duration = 0
 
         for x in range(cue_on_idx, cue_off_idx):
             if eventcode[x - 1] == code_on and eventcode[x] == counted_behavior_off:
@@ -279,7 +285,33 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
                 in_cue_duration += poke_dur
         all_cue_duration += [in_cue_duration]
 
-    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3)
+        for x in range(iti_on_idx, cue_on_idx):
+            if eventcode[x] == counted_behavior_on and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
+                if eventcode[x - 1] == code_on and eventcode[x] == counted_behavior_off:
+                    poke_dur = timecode[x] - timecode[x - 1]
+                    all_iti_poke_dur += [poke_dur]
+                    iti_cue_duration += poke_dur
+                elif eventcode[x] == code_off and eventcode[x - 1] == code_on and eventcode[x + 1] == counted_behavior_off:
+                    poke_dur = timecode[x] - timecode[x - 1]
+                    all_iti_poke_dur += [poke_dur]
+                    iti_cue_duration += poke_dur
+                elif eventcode[x] == counted_behavior_on and (eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
+                    poke_dur = timecode[x + 1] - timecode[x]
+                    all_iti_poke_dur += [poke_dur]
+                    iti_cue_duration += poke_dur
+        all_iti_duration += [iti_cue_duration]
+
+    if not all_cue_duration:
+        all_cue_duration += [0]
+    if not all_poke_dur:
+            all_poke_dur += [0]
+    if not all_iti_duration:
+        all_iti_duration += [0]
+    if not all_iti_poke_dur:
+        all_iti_poke_dur += [0]
+
+    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3),\
+        round(statistics.mean(all_iti_poke_dur), 3), round(statistics.mean(all_iti_duration), 3)
 
 
 def lever_pressing(eventcode, lever1, lever2=False):
