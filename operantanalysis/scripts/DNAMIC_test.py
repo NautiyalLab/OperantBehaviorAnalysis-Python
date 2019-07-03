@@ -23,4 +23,6 @@ def DNAMIC_function(eventcode, timecode, fields_dictionary, i):
 
 
 (days, df) = DNAMIC_loop_over_days(column_list, DNAMIC_function)
+df.to_excel("output.xlsx")
+
 print(df.to_string())
