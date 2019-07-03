@@ -127,7 +127,7 @@ def DNAMIC_extract_info_from_file(filename):
     values = df[:body_start_idx]['timestamp'].tolist()
     fields_dictionary = dict(zip(keys, values))
 
-    df_body = df[body_start_idx:]
+    df_body = df[body_start_idx:-2]
 
     eventcode = df_body['event'].tolist()
     eventcode = [eventcodes_dictionary[int(i)] for i in eventcode]
