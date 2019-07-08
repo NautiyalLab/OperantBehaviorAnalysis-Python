@@ -30,6 +30,7 @@ def Go_NoGo(loaded_file, i):
 
 (days, df) = loop_over_days(column_list, Go_NoGo)
 print(df.to_string())
+df.to_excel("output.xlsx")
 
 group_means = df.groupby(['Day', 'tts'])['Dippers', 'Hit Rate', 'False Alarm Rate', 'Impulsivity Index'].mean().unstack()
 group_sems = df.groupby(['Day', 'tts'])['Dippers', 'Hit Rate', 'False Alarm Rate', 'Impulsivity Index'].sem().unstack()
