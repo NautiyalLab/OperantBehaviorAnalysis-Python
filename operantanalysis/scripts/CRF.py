@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
 
-column_list = ['Subject', 'Day','Dippers', 'Dippers Retrieved', 'Retrieval Latency',
+column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
                'Left Lever Presses', 'Right Lever Presses']
 
 
