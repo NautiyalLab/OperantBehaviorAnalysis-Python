@@ -8,7 +8,7 @@ from .eventcodes import eventcodes_dictionary
 
 __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding",
            "lever_pressing", "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials",
-           "bin_by_time", "binned_responding", "cue_responding_duration"]
+           "bin_by_time", "binned_responding", "cue_responding_duration", "DNAMIC_extract_info_from_file", "DNAMIC_loop_over_days"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -90,6 +90,51 @@ def extract_info_from_file(dictionary_from_file, time_conversion):
         eventcode += [eventcodes_dictionary[int(num[-4:])]]
 
     return timecode, eventcode
+
+
+def DNAMIC_loop_over_days(column_list, behavioral_test_function):
+    """
+    :param column_list: list of strings/column titles for analysis that will be output in a table
+    :param behavioral_test_function: function that contains all the analysis functions to run on each file
+    :return: one concatenated data table of analysis for each animal for each day specified
+    """
+    days = int(input("How many days would you like to analyze?"))
+    df = pd.DataFrame(columns=column_list)
+
+    for i in range(days):
+        root = Tk()  # noqa
+        root.withdraw()
+        folder_selected = filedialog.askdirectory()
+        file_pattern = os.path.join(folder_selected, '*')
+        for file in sorted(glob.glob(file_pattern)):
+            (eventcode, timecode, fields_dictionary) = DNAMIC_extract_info_from_file(file)
+            df2 = behavioral_test_function(eventcode, timecode, fields_dictionary, i)
+            df = df.append(df2, ignore_index=True)
+
+    return days, df
+
+
+def DNAMIC_extract_info_from_file(filename):
+    df = pd.read_csv(filename, sep=':', names=['event', 'timestamp'])
+    df['timestamp'] = df['timestamp'].str.strip()
+
+    # 0, 0, 0 appears after successful initialization --> serves as a cutoff mark
+
+    end_of_init_idx = df.loc[df['timestamp'] == '0'].index[-1]
+    body_start_idx = end_of_init_idx + 1
+
+    keys = df[:body_start_idx]['event'].tolist()
+    values = df[:body_start_idx]['timestamp'].tolist()
+    fields_dictionary = dict(zip(keys, values))
+
+    df_body = df[body_start_idx:-2]
+
+    eventcode = df_body['event'].tolist()
+    eventcode = [eventcodes_dictionary[int(i)] for i in eventcode]
+    timecode = df_body['timestamp'].tolist()
+    timecode = [int(i)/1000 for i in timecode]
+
+    return eventcode, timecode, fields_dictionary
 
 
 def get_events_indices(eventcode, eventtypes):
@@ -207,17 +252,23 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
     :param code_off: event code for the end of a cue
     :param counted_behavior_off: event code for the beginning of target behavior
     :param counted_behavior_on: event code for the end of target behavior
-    :return: mean duration of individual head pokes during cue, mean total duration of head poking during cue
+    :return: mean duration of individual head pokes during cue, mean total duration of head poking during cue, also these for ITI preceeding cue
     """
     cue_on = get_events_indices(eventcode, [code_on])
     cue_off = get_events_indices(eventcode, [code_off])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
     all_poke_dur = []
+    all_iti_poke_dur = []
     all_cue_duration = []
+    all_iti_duration = []
 
     for i in range(len(cue_on)):
         cue_on_idx = cue_on[i]
         cue_off_idx = cue_off[i]
+        iti_on_idx = iti_on[i]
+        cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
         in_cue_duration = 0
+        iti_cue_duration = 0
 
         for x in range(cue_on_idx, cue_off_idx):
             if eventcode[x - 1] == code_on and eventcode[x] == counted_behavior_off:
@@ -234,13 +285,39 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
                 in_cue_duration += poke_dur
         all_cue_duration += [in_cue_duration]
 
-    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3)
+        for x in range(iti_on_idx, cue_on_idx):
+            if eventcode[x] == counted_behavior_on and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
+                if eventcode[x - 1] == code_on and eventcode[x] == counted_behavior_off:
+                    poke_dur = timecode[x] - timecode[x - 1]
+                    all_iti_poke_dur += [poke_dur]
+                    iti_cue_duration += poke_dur
+                elif eventcode[x] == code_off and eventcode[x - 1] == code_on and eventcode[x + 1] == counted_behavior_off:
+                    poke_dur = timecode[x] - timecode[x - 1]
+                    all_iti_poke_dur += [poke_dur]
+                    iti_cue_duration += poke_dur
+                elif eventcode[x] == counted_behavior_on and (eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
+                    poke_dur = timecode[x + 1] - timecode[x]
+                    all_iti_poke_dur += [poke_dur]
+                    iti_cue_duration += poke_dur
+        all_iti_duration += [iti_cue_duration]
+
+    if not all_cue_duration:
+        all_cue_duration += [0]
+    if not all_poke_dur:
+            all_poke_dur += [0]
+    if not all_iti_duration:
+        all_iti_duration += [0]
+    if not all_iti_poke_dur:
+        all_iti_poke_dur += [0]
+
+    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3),\
+        round(statistics.mean(all_iti_poke_dur), 3), round(statistics.mean(all_iti_duration), 3)
 
 
 def lever_pressing(eventcode, lever1, lever2=False):
     """
     :param eventcode: list of event codes from operant conditioning file
-    :param lever1: eventcode for lever pressing
+    :param lever1: eventcode for lever pressing or
     :param lever2: optional parameter for second lever eventcode if two levers are used
     :return: count of first lever presses, second lever presses, and total lever presses, as int
     """
