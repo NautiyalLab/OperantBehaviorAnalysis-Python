@@ -4,7 +4,7 @@ import matplotlib
 
 matplotlib.use("TkAgg")
 
-column_list = ['Subject', 'Program', 'Day', 'Dippers', 'Dippers Retrieved', 'Large Rewards', 'Small Rewards']
+column_list = ['Subject', 'Program', 'Day', 'Dippers', 'Large Rewards', 'Small Rewards']
 
 
 def crf_function(loaded_file, i):
@@ -18,7 +18,7 @@ def crf_function(loaded_file, i):
     (large_rewards, small_rewards) = num_switch_trials(eventcode)
 
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['MSN'], int(i + 1), float(dippers),
-                         float(dippers_retrieved), float(large_rewards), float(small_rewards)]], columns=column_list)
+                         float(large_rewards), float(small_rewards)]], columns=column_list)
 
     return df2
 
@@ -27,10 +27,8 @@ def crf_function(loaded_file, i):
 print(df.to_string())
 df.to_excel("output.xlsx")
 
-group_means = df.groupby(['Day'])['Dippers', 'Dippers Retrieved', 'Right Lever Presses', 'Large Rewards',
-                                  'Small Rewards'].mean().unstack()
-group_sems = df.groupby(['Day'])['Dippers', 'Dippers Retrieved', 'Right Lever Presses', 'Large Rewards',
-                                 'Small Rewards'].sem().unstack()
+group_means = df.groupby(['Day'])['Dippers', 'Right Lever Presses', 'Large Rewards', 'Small Rewards'].mean().unstack()
+group_sems = df.groupby(['Day'])['Dippers', 'Right Lever Presses', 'Large Rewards', 'Small Rewards'].sem().unstack()
 
 print(group_means)
 print(group_sems)
