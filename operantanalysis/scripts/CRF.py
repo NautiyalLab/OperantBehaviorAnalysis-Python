@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
 
-column_list = ['Subject', 'Day', 'tts', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
+column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
                'Left Lever Presses', 'Right Lever Presses']
 
 
@@ -26,7 +26,7 @@ def crf_function(loaded_file, i):
         press_latency = lever_press_latency(timecode, eventcode, 'RLeverOn', 'RPressOn')
         (lever_press_rate, iti_rate) = cue_iti_responding(timecode, eventcode, 'StartSession', 'EndSession', 'RPressOn')
         
-    df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), loaded_file['tts'], float(dippers),
+    df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(dippers_retrieved), float(retrieval_latency), float(left_presses),
                          float(right_presses)]], columns=column_list)
     
@@ -37,8 +37,8 @@ def crf_function(loaded_file, i):
 print(df.to_string())
 df.to_excel("output.xlsx")
 
-group_means = df.groupby(['Day', 'tts'])['Dippers', 'Left Lever Presses', 'Right Lever Presses'].mean().unstack()
-group_sems = df.groupby(['Day', 'tts'])['Dippers', 'Left Lever Presses', 'Right Lever Presses'].sem().unstack()
+group_means = df.groupby(['Day'])['Dippers', 'Left Lever Presses', 'Right Lever Presses'].mean().unstack()
+group_sems = df.groupby(['Day'])['Dippers', 'Left Lever Presses', 'Right Lever Presses'].sem().unstack()
 
 print(group_means)
 print(group_sems)

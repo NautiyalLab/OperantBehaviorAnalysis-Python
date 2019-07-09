@@ -8,7 +8,8 @@ from .eventcodes import eventcodes_dictionary
 
 __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "get_events_indices", "reward_retrieval", "cue_iti_responding",
            "lever_pressing", "lever_press_latency", "total_head_pokes", "num_successful_go_nogo_trials", "count_go_nogo_trials",
-           "bin_by_time", "binned_responding", "cue_responding_duration", "DNAMIC_extract_info_from_file", "DNAMIC_loop_over_days"]
+           "bin_by_time", "binned_responding", "cue_responding_duration", "DNAMIC_extract_info_from_file", "DNAMIC_loop_over_days",
+           "num_switch_trials"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -389,6 +390,14 @@ def count_go_nogo_trials(eventcode):
             go_trials += 1
                       
     return go_trials, nogo_trials
+
+
+def num_switch_trials(eventcode):
+    """
+    :param eventcode: list of event codes from operant conditioning file
+    :return: number of large and small rewards in the switch task
+    """
+    return eventcode.count('LargeReward'), eventcode.count('SmallReward')
 
 
 def bin_by_time(timecode, eventcode, bin_length, counted_event):
