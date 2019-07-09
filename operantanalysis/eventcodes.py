@@ -98,6 +98,8 @@ eventcodes_dictionary = {
     1508: 'InhibitorTrialEnd',
     1509: 'BInhibitorTrialStart',
     1510: 'BInhibitorTrialEnd',
+    1520: 'LargeReward',
+    1521: 'SmallReward',
     7071: 'LPokeOn',
     7070: 'LPokeOff',
     7271: 'LSolOn',
