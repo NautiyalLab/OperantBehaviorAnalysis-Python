@@ -133,7 +133,7 @@ def DNAMIC_extract_info_from_file(filename):
     eventcode = df_body['event'].tolist()
     eventcode = [eventcodes_dictionary[int(i)] for i in eventcode]
     timecode = df_body['timestamp'].tolist()
-    timecode = [int(i)/1000 for i in timecode]
+    timecode = [int(i) / 1000 for i in timecode]
 
     return eventcode, timecode, fields_dictionary
 
@@ -305,7 +305,7 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
     if not all_cue_duration:
         all_cue_duration += [0]
     if not all_poke_dur:
-            all_poke_dur += [0]
+        all_poke_dur += [0]
     if not all_iti_duration:
         all_iti_duration += [0]
     if not all_iti_poke_dur:
