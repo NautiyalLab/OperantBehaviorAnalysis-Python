@@ -1,4 +1,4 @@
-from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval
+from operantanalysis import loop_over_days, extract_info_from_file
 import pandas as pd
 
 
