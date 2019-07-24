@@ -111,5 +111,5 @@ eventcodes_dictionary = {
     9071: 'RPokeOn',
     9070: 'RPokeOff',
     9271: 'RSolOn',
-    9270: 'RSolOff',
+    9270: 'RSolOff'
 }
