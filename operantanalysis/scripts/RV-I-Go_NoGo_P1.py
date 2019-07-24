@@ -3,7 +3,7 @@ import pandas as pd
 
 
 column_list = ['Subject', 'Day', 'Small Go Trials', 'Large Go Trials', 'Successful Small Go Trials',
-               'Successful Large Go Trials']
+               'Successful Large Go Trials', 'Small Go Latency', 'Large Go Latency']
 
 
 def RVI_Go_NoGo_P1(loaded_file, i):
@@ -17,11 +17,12 @@ def RVI_Go_NoGo_P1(loaded_file, i):
                                           eventcode.count('GoTrialBegLargeReward'),
                                           eventcode.count('GoTrialSuccessSmallReward'),
                                           eventcode.count('GoTrialSuccessLargeReward'))
-    small_go_latency = lever_press_latency(timecode, eventcode, lever_on, lever_press)
-    large_go_latency = lever_press_latency(timecode, eventcode, lever_on, lever_press)
+    small_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
+    large_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(small_go_trials), float(large_go_trials),
-                         float(small_go_success), float(large_go_success)]],
+                         float(small_go_success), float(large_go_success), float(small_go_latency),
+                         float(large_go_latency)]],
                        columns=column_list)
 
     return df2
@@ -31,8 +32,12 @@ def RVI_Go_NoGo_P1(loaded_file, i):
 print(df.to_string())
 df.to_excel("output.xlsx")
 
-group_means = df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward'].mean()
-group_sems = df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward'].sem()
+group_means = df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward','small_go_latency',
+                                  'large_go_latency'].mean()
+group_sems = df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'small_go_latency',
+                                 'large_go_latency'].sem()
 
-print(df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward'].mean().unstack().to_string())
-print(df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward'].sem().unstack().to_string())
+print(df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'small_go_latency',
+                          'large_go_latency'].mean().unstack().to_string())
+print(df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'small_go_latency',
+                          'large_go_latency'].sem().unstack().to_string())
