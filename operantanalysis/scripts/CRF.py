@@ -20,11 +20,11 @@ def crf_function(loaded_file, i):
     (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
     
     if 'LLeverOn' in eventcode:
-        press_latency = lever_press_latency(timecode, eventcode, 'LLeverOn', 'LPressOn')
-        (lever_press_rate, iti_rate) = cue_iti_responding(timecode, eventcode, 'StartSession', 'EndSession', 'LPressOn')
+        press_latency = lever_press_latency(timecode, eventcode, 'LLeverOn', 'LPressOn')  # noqa
+        (lever_press_rate, iti_rate) = cue_iti_responding(timecode, eventcode, 'StartSession', 'EndSession', 'LPressOn')  # noqa
     elif 'RLeverOn' in eventcode:
-        press_latency = lever_press_latency(timecode, eventcode, 'RLeverOn', 'RPressOn')
-        (lever_press_rate, iti_rate) = cue_iti_responding(timecode, eventcode, 'StartSession', 'EndSession', 'RPressOn')
+        press_latency = lever_press_latency(timecode, eventcode, 'RLeverOn', 'RPressOn')  # noqa
+        (lever_press_rate, iti_rate) = cue_iti_responding(timecode, eventcode, 'StartSession', 'EndSession', 'RPressOn')  # noqa
         
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(dippers_retrieved), float(retrieval_latency), float(left_presses),
