@@ -20,8 +20,8 @@ def Go_NoGo(loaded_file, i):
     (go_trials, nogo_trials) = count_go_nogo_trials(eventcode)
     (successful_go_trials, successful_nogo_trials) = num_successful_go_nogo_trials(eventcode)
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], int(i + 1), float(dippers),
-                         float(successful_go_trials)/float(go_trials)*100,
-                         (float(nogo_trials)-float(successful_nogo_trials))/float(nogo_trials)*100,
+                         float(successful_go_trials) / float(go_trials) * 100,
+                         (float(nogo_trials) - float(successful_nogo_trials)) / float(nogo_trials) * 100,
                          float(successful_go_trials) - float(successful_nogo_trials)]],
                        columns=column_list)
 
@@ -47,7 +47,7 @@ group_means['False Alarm Rate'].plot(legend=True, yerr=group_sems['False Alarm R
 plt.ylabel('False Alarm Rate')
 
 group_means['Impulsivity Index'].plot(legend=True, yerr=group_sems['Impulsivity Index'],
-                                     xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
+                                      xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
 plt.ylabel('Impulsivity Index')
 
 plt.show()
