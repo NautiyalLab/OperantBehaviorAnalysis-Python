@@ -23,6 +23,7 @@ def trough_train_function(loaded_file, i):
 
 
 (days, df) = loop_over_days(column_list, trough_train_function)
+print(df.to_string())
 
 group_means = df.groupby(['Day'])['Dippers Retrieved', 'Retrieval Latency'].mean()
 group_sems = df.groupby(['Day'])['Dippers Retrieved', 'Retrieval Latency'].sem()
