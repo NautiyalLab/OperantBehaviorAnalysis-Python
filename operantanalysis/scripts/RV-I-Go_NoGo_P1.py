@@ -32,12 +32,12 @@ def RVI_Go_NoGo_P1(loaded_file, i):
 print(df.to_string())
 df.to_excel("output.xlsx")
 
-group_means = df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'Small Go Latency',
-                                  'large_go_latency'].mean()
-group_sems = df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'Small Go Latency',
-                                 'large_go_latency'].sem()
+group_means = df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
+                                  'Large Go Latency'].mean()
+group_sems = df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
+                                 'Large Go Latency'].sem()
 
-print(df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'Small Go Latency',
+print(df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
                           'Large Go Latency'].mean().unstack().to_string())
-print(df.groupby(['Day'])['GoTrialSuccessSmallReward', 'GoTrialSuccessLargeReward', 'Small Go Latency',
+print(df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
                           'Large Go Latency'].sem().unstack().to_string())
