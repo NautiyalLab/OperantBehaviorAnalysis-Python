@@ -1,5 +1,7 @@
-from operantanalysis import load_file, extract_info_from_file, DNAMIC_extract_info_from_file, reward_retrieval, cue_iti_responding, lever_pressing, \
-    lever_press_latency, total_head_pokes, num_successful_go_nogo_trials, count_go_nogo_trials, bin_by_time
+from operantanalysis import load_file, extract_info_from_file, DNAMIC_extract_info_from_file, get_events_indices, \
+    reward_retrieval, cue_iti_responding, binned_responding, cue_responding_duration, lever_pressing,\
+    lever_press_latency, total_head_pokes, num_successful_go_nogo_trials, count_go_nogo_trials, num_switch_trials,\
+    bin_by_time
 
 
 def test_load_files():
@@ -25,6 +27,11 @@ def test_DNAMIC_extract_info_from_file():
     assert len(timecode) == len(eventcode)
 
 
+def test_get_events_indices():
+    assert get_events_indices(['PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1'], 'PokeOn1') == [0, 4]
+    assert get_events_indices(['PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1'], 'DipOn') == [1]
+
+
 def test_reward_retrieval():
     assert reward_retrieval([0, 1, 2, 3, 4], ['PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1']) == (1, 1, 0)
     assert reward_retrieval([0, 1, 2, 3, 4], ['DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1']) == (1, 1, 1)
@@ -36,6 +43,16 @@ def test_cue_iti_responding():
     assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'PokeOn1', 'LPressOn', 'PokeOn1', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn', 'PokeOn1') == (30.0, 30.0)
     assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'LPressOn', 'PokeOn1', 'PokeOn1', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn', 'PokeOn1') == (40.0, 0.0)
     assert cue_iti_responding([0, 1, 2, 3, 4, 5], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'RPressOn', 'PokeOn1'], 'LPressOn', 'RPressOn', 'PokeOn1') == (0.0, 60.0)
+
+
+def test_binned_responding():
+    assert binned_responding([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 1) == (0.0, 60.0)
+    assert binned_responding([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 1) == (30.0, 0.0)
+
+
+def cue_responding_duration():
+    assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (0.0, 0.0, 1.0, 1.0)
+    assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (1.0, 1.0, 0.0, 0.0)
 
 
 def test_lever_pressing():
@@ -67,7 +84,11 @@ def test_count_go_nogo_trials():
     assert count_go_nogo_trials(['StartSession', 'RLeverOn', 'PokeOn1', 'RLeverOn', 'LightOn1', 'RLeverOn', 'LightOn1']) == (1, 2)
     assert count_go_nogo_trials(['StartSession', 'RLeverOn', 'PokeOn1', 'SuccessfulNoGoTrial', 'RLeverOn', 'LightOn1']) == (1, 1)
     
-    
+
+def test_num_switch_trials():
+    assert num_switch_trials(['StartSession', 'LargeReward', 'SmallReward', 'LargeReward', 'LargeReward', 'SmallReward']) == (3, 2)
+
+
 def test_bin_by_time():
     assert bin_by_time([0, 1, 2, 3, 4, 5],
                        ['StartSession', 'PokeOn1', 'LPressOn', 'PokeOn1', 'RPressOn', 'PokeOn1'], 1, 'RPressOn') == [0, 0, 0, 0, 1]
