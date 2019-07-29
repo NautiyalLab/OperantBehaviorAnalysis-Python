@@ -14,9 +14,9 @@ def RVI_Go_NoGo_P1(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (small_go_trials, large_go_trials, small_go_success, large_go_success) = (eventcode.count('GoTrialBegSmallReward'),
-                                          eventcode.count('GoTrialBegLargeReward'),
-                                          eventcode.count('GoTrialSuccessSmallReward'),
-                                          eventcode.count('GoTrialSuccessLargeReward'))
+                                                                              eventcode.count('GoTrialBegLargeReward'),
+                                                                              eventcode.count('GoTrialSuccessSmallReward'),
+                                                                              eventcode.count('GoTrialSuccessLargeReward'))
     small_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
     large_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
 
