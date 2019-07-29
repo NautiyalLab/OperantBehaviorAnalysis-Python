@@ -1,5 +1,5 @@
-from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, \
-    lever_press_latency, cue_iti_responding  # noqa
+from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing
+#    lever_press_latency, cue_iti_responding
 import pandas as pd
 import matplotlib
 matplotlib.use("TkAgg")
