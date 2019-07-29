@@ -6,7 +6,7 @@ from tkinter import *  # noqa
 import pandas as pd
 from .eventcodes import eventcodes_dictionary
 
-__all__ = ["loop_over_days", "load_file", "extract_info_from_file",  "DNAMIC_extract_info_from_file",
+__all__ = ["loop_over_days", "load_file", "extract_info_from_file", "DNAMIC_extract_info_from_file",
            "DNAMIC_loop_over_days", "get_events_indices", "reward_retrieval", "cue_iti_responding", "binned_responding",
            "cue_responding_duration", "lever_pressing", "lever_press_latency", "total_head_pokes",
            "num_successful_go_nogo_trials", "count_go_nogo_trials", "num_switch_trials", "bin_by_time"]
