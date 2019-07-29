@@ -50,8 +50,8 @@ def test_binned_responding():
     assert binned_responding([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 1) == (30.0, 0.0)
 
 
-def cue_responding_duration():
-    assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (0.0, 0.0, 1.0, 1.0)
+def test_cue_responding_duration():
+    assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (0.0, 0.0, 0.0, 0.0)
     assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (1.0, 1.0, 0.0, 0.0)
 
 
