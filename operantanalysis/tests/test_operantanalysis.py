@@ -5,25 +5,25 @@ from operantanalysis import load_file, extract_info_from_file, DNAMIC_extract_in
 
 
 def test_load_files():
-    (dictionary) = load_file("../../operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
+    (dictionary) = load_file("../operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
     assert "W" in dictionary
     assert "Subject" in dictionary
     assert len(dictionary) == 12
-    (dictionary2) = load_file("../../operantanalysis/sampledata/!2014-01-31_11h16m.Subject 818.txt")
+    (dictionary2) = load_file("../operantanalysis/sampledata/!2014-01-31_11h16m.Subject 818.txt")
     assert "W" in dictionary2
     assert "Subject" in dictionary2
     assert len(dictionary2) == 14
 
 
 def test_extract_info_from_file():
-    (dictionary) = load_file("../../operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
+    (dictionary) = load_file("../operantanalysis/sampledata/!2018-11-27_08h39m.Subject _0001.txt")
     (timecode, eventcode) = extract_info_from_file(dictionary, 500)
     assert len(timecode) == len(eventcode)
     assert all(map(lambda x: x >= 0, timecode))
 
 
 def test_DNAMIC_extract_info_from_file():
-    (timecode, eventcode, fields_dictionary) = DNAMIC_extract_info_from_file("../../operantanalysis/sampledata/n1_d1.txt")
+    (timecode, eventcode, fields_dictionary) = DNAMIC_extract_info_from_file("../operantanalysis/sampledata/n1_d1.txt")
     assert len(timecode) == len(eventcode)
 
 
