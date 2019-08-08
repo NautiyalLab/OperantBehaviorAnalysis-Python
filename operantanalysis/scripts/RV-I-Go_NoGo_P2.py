@@ -8,7 +8,7 @@ column_list = ['Subject', 'Day', 'Small Go Trials', 'Large Go Trials', 'Successf
                'Successful Large No Go Trials']
 
 
-def RV-I_Go_NoGo_P2(loaded_file, i):
+def RVI_Go_NoGo_P2(loaded_file, i):
     """
     :param loaded_file: file output from operant box
     :param i: number of days analyzing
@@ -16,22 +16,22 @@ def RV-I_Go_NoGo_P2(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (small_go_trials, large_go_trials, small_go_success, large_go_success, small_no_go_trials, large_no_go_trials,
-     small_no_go_success, large_no_go_success) = (eventcode.count('GoTrialBegSmallReward'),
-                                          eventcode.count('GoTrialBegLargeReward'),
-                                          eventcode.count('GoTrialSuccessSmallReward'),
-                                          eventcode.count('GoTrialSuccessLargeReward'),
-                                          eventcode.count('NoGoTrialBegSmallReward'),
-                                          eventcode.count('NoGoTrialBegLargeReward'),
-                                          eventcode.count('NoGoTrialSuccessSmallReward'),
-                                          eventcode.count('NoGoTrialSuccessLargeReward'))
+         small_no_go_success, large_no_go_success) = (eventcode.count('GoTrialBegSmallReward'),
+                                              eventcode.count('GoTrialBegLargeReward'),
+                                              eventcode.count('GoTrialSuccessSmallReward'),
+                                              eventcode.count('GoTrialSuccessLargeReward'),
+                                              eventcode.count('NoGoTrialBegSmallReward'),
+                                              eventcode.count('NoGoTrialBegLargeReward'),
+                                              eventcode.count('NoGoTrialSuccessSmallReward'),
+                                              eventcode.count('NoGoTrialSuccessLargeReward'))
     small_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
     large_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(small_go_trials), float(large_go_trials),
-                         float(small_go_success), float(large_go_success), float(small_go_latency),
-                         float(large_go_latency), float(small_no_go_trials), float(large_no_go_trials),
-                         float(small_no_go_success), float(large_no_go_success)]],
-                       columns=column_list)
+                             float(small_go_success), float(large_go_success), float(small_go_latency),
+                             float(large_go_latency), float(small_no_go_trials), float(large_no_go_trials),
+                             float(small_no_go_success), float(large_no_go_success)]],
+                           columns=column_list)
 
     return df2
 
