@@ -1,4 +1,4 @@
-from operantanalysis import loop_over_days, extract_info_from_file, lever_press_latency
+from operantanalysis import loop_over_days, extract_info_from_file, lever_press_lat_gng
 import pandas as pd
 
 
@@ -24,8 +24,8 @@ def RVI_Go_NoGo_P2(loaded_file, i):
                                               eventcode.count('NoGoTrialBegLargeReward'),
                                               eventcode.count('NoGoTrialSuccessSmallReward'),
                                               eventcode.count('NoGoTrialSuccessLargeReward'))
-    small_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
-    large_go_latency = lever_press_latency(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
+    small_go_latency = lever_press_lat_gng(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
+    large_go_latency = lever_press_lat_gng(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(small_go_trials), float(large_go_trials),
                              float(small_go_success), float(large_go_success), float(small_go_latency),
