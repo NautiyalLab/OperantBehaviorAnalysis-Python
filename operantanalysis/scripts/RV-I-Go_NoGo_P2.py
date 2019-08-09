@@ -17,13 +17,13 @@ def RVI_Go_NoGo_P2(loaded_file, i):
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (small_go_trials, large_go_trials, small_go_success, large_go_success, small_no_go_trials, large_no_go_trials,
          small_no_go_success, large_no_go_success) = (eventcode.count('GoTrialBegSmallReward'),
-                                              eventcode.count('GoTrialBegLargeReward'),
-                                              eventcode.count('GoTrialSuccessSmallReward'),
-                                              eventcode.count('GoTrialSuccessLargeReward'),
-                                              eventcode.count('NoGoTrialBegSmallReward'),
-                                              eventcode.count('NoGoTrialBegLargeReward'),
-                                              eventcode.count('NoGoTrialSuccessSmallReward'),
-                                              eventcode.count('NoGoTrialSuccessLargeReward'))
+                                                      eventcode.count('GoTrialBegLargeReward'),
+                                                      eventcode.count('GoTrialSuccessSmallReward'),
+                                                      eventcode.count('GoTrialSuccessLargeReward'),
+                                                      eventcode.count('NoGoTrialBegSmallReward'),
+                                                      eventcode.count('NoGoTrialBegLargeReward'),
+                                                      eventcode.count('NoGoTrialSuccessSmallReward'),
+                                                      eventcode.count('NoGoTrialSuccessLargeReward'))
     small_go_latency = lever_press_lat_gng(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
     large_go_latency = lever_press_lat_gng(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
 
@@ -42,14 +42,14 @@ df.to_excel("output.xlsx")
 
 group_means = df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
                                   'Large Go Latency', 'Successful Small No Go Trials',
-                                  'Successful Large No go Trials'].mean()
+                                  'Successful Large No Go Trials'].mean()
 group_sems = df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
                                  'Large Go Latency', 'Successful Small No Go Trials',
-                                 'Successful Large No go Trials'].sem()
+                                 'Successful Large No Go Trials'].sem()
 
 print(df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
                           'Large Go Latency', 'Successful Small No Go Trials',
-                          'Successful Large No go Trials'].mean().unstack().to_string())
+                          'Successful Large No Go Trials'].mean().unstack().to_string())
 print(df.groupby(['Day'])['Successful Small Go Trials', 'Successful Large Go Trials', 'Small Go Latency',
                           'Large Go Latency', 'Successful Small No Go Trials',
-                          'Successful Large No go Trials'].sem().unstack().to_string())
+                          'Successful Large No Go Trials'].sem().unstack().to_string())
