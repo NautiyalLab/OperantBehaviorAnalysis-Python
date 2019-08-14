@@ -10,7 +10,7 @@ __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "DNAMIC_extr
            "DNAMIC_loop_over_days", "get_events_indices", "reward_retrieval", "cue_iti_responding", "binned_responding",
            "cue_responding_duration", "lever_pressing", "lever_press_latency", "total_head_pokes",
            "num_successful_go_nogo_trials", "count_go_nogo_trials", "num_switch_trials", "bin_by_time",
-           "lever_press_lat_gng"]
+           "lever_press_lat_gng", "RVI_gng_weird"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -351,9 +351,9 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
         if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
             lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
             press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
-            break
         else:
             pass
+
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
@@ -444,10 +444,44 @@ def lever_press_lat_gng(timecode, eventcode, lever_on, lever_press):
         if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
             lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
             press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
-            break
         else:
             pass
+
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
         return 0
+
+
+def RVI_gng_weird(timecode, eventcode, lever_on, lever_press):
+    """
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param lever_on: event name for lever presentation
+    :param lever_press: event name for lever press
+    :return: the mean latency to press the lever in seconds
+    """
+    lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
+    press_latency = []
+    incorrect_trials = 0
+
+    for i in range(len(lever_on) - 1):
+        lever_on_idx = lever_on[i]
+        if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+            lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
+            press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+        else:
+            pass
+
+    final_press_latency = []
+
+    for x in press_latency:
+        if x >= 5:
+            incorrect_trials += 1
+        else:
+            final_press_latency += [x]
+
+    if len(final_press_latency) > 0:
+        return round(statistics.mean(final_press_latency), 3), incorrect_trials
+    else:
+        return 0, incorrect_trials
