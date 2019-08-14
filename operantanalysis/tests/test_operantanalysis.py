@@ -37,6 +37,7 @@ def test_reward_retrieval():
     assert reward_retrieval([0, 1, 2, 3, 4], ['DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1']) == (1, 1, 1)
     assert reward_retrieval([0, 1, 2, 3, 4, 5, 6], ['DipOn', 'PokeOn1', 'PokeOff1', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1']) == (1, 1, 1)
     assert reward_retrieval([0, 1, 2, 3, 4, 5, 6, 7], ['PokeOn1', 'DipOn', 'DipOff', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'PokeOff1']) == (2, 2, 0)
+    assert reward_retrieval([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], ['DipOn', 'PokeOn1', 'PokeOff1', 'DipOff', 'PokeOn1', 'DipOn', 'DipOff', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'PokeOff1']) == (3, 3, 0.333)
 
 
 def test_cue_iti_responding():
@@ -53,6 +54,7 @@ def test_binned_responding():
 def test_cue_responding_duration():
     assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'DipOn', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (0.0, 0.0, 0.0, 0.0)
     assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'DipOn', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (1.0, 1.0, 0.0, 0.0)
+    assert cue_responding_duration([0, 1, 2, 3, 4, 5, 6, 7, 8,  9, 10, 11, 12], ['StartSession', 'DipOn', 'PokeOn1', 'PokeOff1', 'DipOff', 'DipOn', 'PokeOn1', 'PokeOff1', 'PokeOn1', 'DipOff', 'PokeOff1', 'PokeOn1', 'EndSession'], 'DipOn', 'DipOff', 'PokeOn1', 'PokeOff1') == (1.0, 1.5, 0.0, 0.0)
 
 
 def test_lever_pressing():
@@ -65,6 +67,7 @@ def test_lever_press_latency():
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 1
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 'LPressOn', 'PokeOn1', 'EndSession'], 'LPressOn', 'RPressOn') == 0
     assert lever_press_latency([0, 1, 2, 3, 4, 5, 6], ['StartSession', 'PokeOn1', 'PokeOn1', 'LPressOn', 0, 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 2
+    assert lever_press_latency([0, 1, 2, 3, 4, 5, 6, 7, 8], ['StartSession', 'PokeOn1', 'LPressOn', 'RPressOn', 'PokeOn1', 'LPressOn', 0, 'RPressOn', 'EndSession'], 'LPressOn', 'RPressOn') == 1.5
 
     
 def test_total_head_pokes():
