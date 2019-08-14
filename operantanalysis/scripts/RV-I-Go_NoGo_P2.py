@@ -1,11 +1,11 @@
-from operantanalysis import loop_over_days, extract_info_from_file, lever_press_lat_gng
+from operantanalysis import loop_over_days, extract_info_from_file, lever_press_lat_gng, RVI_gng_weird
 import pandas as pd
 
 
 column_list = ['Subject', 'Day', 'Small Go Trials', 'Large Go Trials', 'Successful Small Go Trials',
                'Successful Large Go Trials', 'Small Go Latency', 'Large Go Latency', 'Small No Go Trials',
                'Large No Go Trials', 'Successful Small No Go Trials',
-               'Successful Large No Go Trials']
+               'Successful Large No Go Trials', 'Incorrect Trials']
 
 
 def RVI_Go_NoGo_P2(loaded_file, i):
@@ -24,13 +24,14 @@ def RVI_Go_NoGo_P2(loaded_file, i):
                                                   eventcode.count('NoGoTrialBegLargeReward'),
                                                   eventcode.count('NoGoTrialSuccessSmallReward'),
                                                   eventcode.count('NoGoTrialSuccessLargeReward'))
-    small_go_latency = lever_press_lat_gng(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
+    (small_go_latency, incorrect_trials) = RVI_gng_weird(timecode, eventcode, 'GoTrialBegSmallReward', 'GoTrialSuccessSmallReward')
     large_go_latency = lever_press_lat_gng(timecode, eventcode, 'GoTrialBegLargeReward', 'GoTrialSuccessLargeReward')
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(small_go_trials), float(large_go_trials),
-                         float(small_go_success), float(large_go_success), float(small_go_latency),
-                         float(large_go_latency), float(small_no_go_trials), float(large_no_go_trials),
-                         float(small_no_go_success), float(large_no_go_success)]],
+                         float(small_go_success - incorrect_trials), float(large_go_success), float(small_go_latency),
+                         float(large_go_latency), float(small_no_go_trials - incorrect_trials),
+                         float(large_no_go_trials), float(small_no_go_success), float(large_no_go_success),
+                         float(incorrect_trials)]],
                        columns=column_list)
 
     return df2
