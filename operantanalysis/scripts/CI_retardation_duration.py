@@ -2,7 +2,7 @@ from operantanalysis import loop_over_days, extract_info_from_file, cue_respondi
 import pandas as pd
 
 
-column_list = ['Subject', 'tts', 'Condition', 'Day', 'Light Poke Duration', 'LightITI']
+column_list = ['Subject', 'Condition', 'Day', 'Light Poke Duration', 'LightITI']
 
 
 def CI_retardation_function(loaded_file, i):
@@ -13,7 +13,7 @@ def CI_retardation_function(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (X_dur_individual, X_dur_total, XITI_dur_individual, XITI_dur_total) = cue_responding_duration(timecode, eventcode, 'InhibitorTrialStart', 'InhibitorTrialEnd', 'PokeOn1', 'PokeOff1')
-    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], loaded_file['CI'], int(i + 1),
+    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['CI'], int(i + 1),
                          float(X_dur_total), float(XITI_dur_total)]], columns=column_list)
 
     return df2
@@ -26,5 +26,5 @@ df.to_excel("output.xlsx")
 group_means = df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].mean()
 group_sems = df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].sem()
 
-print(df.groupby(['Day', 'tts', 'Condition'])['Light Poke Duration', 'LightITI'].mean().unstack().to_string())
-print(df.groupby(['Day', 'tts', 'Condition'])['Light Poke Duration', 'LightITI'].sem().unstack().to_string())
+print(df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].mean().unstack().to_string())
+print(df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].sem().unstack().to_string())

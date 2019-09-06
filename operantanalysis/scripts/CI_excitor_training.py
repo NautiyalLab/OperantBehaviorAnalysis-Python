@@ -2,7 +2,7 @@ from operantanalysis import loop_over_days, extract_info_from_file, reward_retri
 import pandas as pd
 
 
-column_list = ['Subject', 'tts', 'Condition', 'Day', 'Click Responding', 'Click ITI',
+column_list = ['Subject', 'Condition', 'Day', 'Click Responding', 'Click ITI',
                'Noise Responding', 'Noise ITI', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency']
 
 
@@ -17,7 +17,7 @@ def CI_training_function(loaded_file, i):
     (A_responding, A_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorATrialStart', 'ExcitorATrialEnd', 'PokeOn1')
     (B_responding, B_iti) = cue_iti_responding(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1')
 
-    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], loaded_file['MSN'], int(i + 1), float(A_responding),
+    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['MSN'], int(i + 1), float(A_responding),
                          float(A_iti), float(B_responding), float(B_iti), float(dippers), float(dippers_retrieved),
                          float(retrieval_latency)]], columns=column_list)
 
@@ -31,5 +31,5 @@ df.to_excel("output.xlsx")
 group_means = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding'].mean()
 group_sems = df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding'].sem()
 
-print(df.groupby(['Day', 'tts', 'Condition'])['Click Responding', 'Noise Responding'].mean().unstack().to_string())
-print(df.groupby(['Day', 'tts', 'Condition'])['Click Responding', 'Noise Responding'].sem().unstack().to_string())
+print(df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding'].mean().unstack().to_string())
+print(df.groupby(['Day', 'Condition'])['Click Responding', 'Noise Responding'].sem().unstack().to_string())

@@ -2,7 +2,7 @@ from operantanalysis import loop_over_days, extract_info_from_file, cue_respondi
 import pandas as pd
 
 
-column_list = ['Subject', 'tts', 'Condition', 'Day', 'Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
+column_list = ['Subject', 'Condition', 'Day', 'Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
                'Noise ITI', 'Inhibitor Pokes Duration', 'Inhibitor ITI']
 
 
@@ -18,7 +18,7 @@ def CI_training_function(loaded_file, i):
     (B_dur_individual, B_dur_total, BITI_dur_individual, BITI_dur_total) = cue_responding_duration(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1', 'PokeOff1')
     (X_dur_individual, X_dur_total, XITI_dur_individual, XITI_dur_total) = cue_responding_duration(timecode, eventcode, 'InhibitorTrialStart', 'InhibitorTrialEnd', 'PokeOn1', 'PokeOff1')
 
-    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['tts'], loaded_file['MSN'], int(i + 1),
+    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['MSN'], int(i + 1),
                          float(A_dur_total), float(AITI_dur_total), float(B_dur_total), float(BITI_dur_total),
                          float(X_dur_total), float(XITI_dur_total)]], columns=column_list)
 
@@ -34,7 +34,7 @@ group_means = df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click IT
 group_sems = df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
                                               'Noise ITI', 'Inhibitor Pokes Duration', 'Inhibitor ITI'].sem()
 
-print(df.groupby(['Day', 'tts', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration', 'Noise ITI',
+print(df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration', 'Noise ITI',
                                               'Inhibitor Pokes Duration', 'Inhibitor ITI'].mean().unstack().to_string())
-print(df.groupby(['Day', 'tts', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration', 'Noise ITI',
+print(df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration', 'Noise ITI',
                                               'Inhibitor Pokes Duration', 'Inhibitor ITI'].sem().unstack().to_string())
