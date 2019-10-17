@@ -100,6 +100,10 @@ eventcodes_dictionary = {
     1510: 'InhibitorTrialEnd',  # actually BInhibitorTrialEnd, but needed to use this def. so current code works
     1520: 'LargeReward',
     1521: 'SmallReward',
+    1531: 'RewardTrialStart',
+    1532: 'RewardTrialEnd',
+    1533: 'NoRewardTrialStart',
+    1534: 'NoRewardTrialEnd',
     1540: 'GoTrialBegSmallReward',
     1541: 'GoTrialBegLargeReward',
     1542: 'GoTrialSuccessSmallReward',
