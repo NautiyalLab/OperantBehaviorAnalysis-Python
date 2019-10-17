@@ -13,7 +13,7 @@ def CI_retardation_function(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (X_dur_individual, X_dur_total, XITI_dur_individual, XITI_dur_total) = cue_responding_duration(timecode, eventcode, 'InhibitorTrialStart', 'InhibitorTrialEnd', 'PokeOn1', 'PokeOff1')
-    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['CI'], int(i + 1),
+    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['MSN'], int(i + 1),
                          float(X_dur_total), float(XITI_dur_total)]], columns=column_list)
 
     return df2
