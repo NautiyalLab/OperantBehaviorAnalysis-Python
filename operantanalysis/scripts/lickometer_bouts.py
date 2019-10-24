@@ -40,6 +40,7 @@ for colname, col in df.iteritems():
             if bout > 0:
                 rate_list += [lick_count / bout]
             bout = 0
+            lick_count = 1
         elif math.isnan(x) and nan < 1:
             nan += 1
             bout_list += [bout]
