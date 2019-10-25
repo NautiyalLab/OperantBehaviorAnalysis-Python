@@ -53,7 +53,7 @@ for colname, col in df.iteritems():
     df2 = pd.concat([df2, dftemp], ignore_index=True, axis=1)
     dftemp2 = pd.DataFrame(np.array(rate_list))
     df3 = pd.concat([df3, dftemp2], ignore_index=True, axis=1)
-    dftempmeans = pd.DataFrame(np.array([len(col), len(rate_list), sum(bout_list)/len(rate_list), sum(rate_list)/len(rate_list)]))
+    dftempmeans = pd.DataFrame(np.array([np.count_nonzero(~np.isnan(col)), len(rate_list), sum(bout_list)/len(rate_list), sum(rate_list)/len(rate_list)]))
     df4means = pd.concat([df4means, dftempmeans], ignore_index=True, axis=1)
 
 df2.columns = df.columns
