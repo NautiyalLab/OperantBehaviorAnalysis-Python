@@ -49,11 +49,17 @@ for colname, col in df.iteritems():
             if bout > 0:
                 rate_list += [lick_count / bout]
             bout = 0
+    if len(rate_list) == 0:
+        mean_bout_l = 0
+        mean_rate = 0
+    else:
+        mean_bout_l = sum(bout_list)/len(rate_list)
+        mean_rate = sum(rate_list)/len(rate_list)
     dftemp = pd.DataFrame(np.array(bout_list))
     df2 = pd.concat([df2, dftemp], ignore_index=True, axis=1)
     dftemp2 = pd.DataFrame(np.array(rate_list))
     df3 = pd.concat([df3, dftemp2], ignore_index=True, axis=1)
-    dftempmeans = pd.DataFrame(np.array([np.count_nonzero(~np.isnan(col)), len(rate_list), sum(bout_list)/len(rate_list), sum(rate_list)/len(rate_list)]))
+    dftempmeans = pd.DataFrame(np.array([np.count_nonzero(~np.isnan(col)), len(rate_list), mean_bout_l, mean_rate]))
     df4means = pd.concat([df4means, dftempmeans], ignore_index=True, axis=1)
 
 df2.columns = df.columns
