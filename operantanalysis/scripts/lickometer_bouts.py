@@ -52,7 +52,7 @@ for colname, col in df.iteritems():
                 rate_list += [lick_count / bout]
             bout = 0
         totaltime += x
-        if totaltime <= 1200:
+        if totaltime <= 120000:
             lick_count_2 += 1
     if len(rate_list) == 0:
         mean_bout_l = 0
@@ -60,7 +60,7 @@ for colname, col in df.iteritems():
     else:
         mean_bout_l = sum(bout_list)/len(rate_list)
         mean_rate = sum(rate_list)/len(rate_list)
-    lick_rate_2min = lick_count_2 / 1200
+    lick_rate_2min = lick_count_2 / 120000
     dftemp = pd.DataFrame(np.array(bout_list))
     df2 = pd.concat([df2, dftemp], ignore_index=True, axis=1)
     dftemp2 = pd.DataFrame(np.array(rate_list))

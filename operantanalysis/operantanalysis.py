@@ -7,10 +7,12 @@ import pandas as pd
 from .eventcodes import eventcodes_dictionary
 
 __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "DNAMIC_extract_info_from_file",
-           "DNAMIC_loop_over_days", "get_events_indices", "reward_retrieval", "cue_iti_responding", "binned_responding",
-           "cue_responding_duration", "lever_pressing", "lever_press_latency", "total_head_pokes",
+           "DNAMIC_loop_over_days", "get_events_indices", "reward_retrieval", "cue_iti_responding",
+           "cue_iti_responding_PavCA", "binned_responding",
+           "cue_responding_duration", "lever_pressing", "lever_press_latency", "lever_press_latency_PavCA",
+           "total_head_pokes",
            "num_successful_go_nogo_trials", "count_go_nogo_trials", "num_switch_trials", "bin_by_time",
-           "lever_press_lat_gng", "RVI_gng_weird", "RVI_nogo_latency"]
+           "lever_press_lat_gng", "RVI_gng_weird", "RVI_nogo_latency", "lever_press_latency_Switch"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -192,6 +194,8 @@ def cue_iti_responding(timecode, eventcode, code_on, code_off, counted_behavior)
     """
     cue_on = get_events_indices(eventcode, [code_on])
     cue_off = get_events_indices(eventcode, [code_off])
+    if len(cue_on) != len(cue_off):
+        cue_off += get_events_indices(eventcode, ['EndSession'])
     iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
     all_poke_rpm = []
     all_poke_iti_rpm = []
@@ -201,16 +205,62 @@ def cue_iti_responding(timecode, eventcode, code_on, code_off, counted_behavior)
         cue_off_idx = cue_off[i]
         iti_on_idx = iti_on[i]
         cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
-        poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count(counted_behavior)) / (cue_length_sec / 60))
+        if cue_length_sec > 0:
+            poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count(counted_behavior)) / (cue_length_sec / 60))
+        else:
+            poke_rpm = 0
         all_poke_rpm += [poke_rpm]
         iti_poke = 0
         for x in range(iti_on_idx, cue_on_idx):
             if eventcode[x] == counted_behavior and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
                 iti_poke += 1
-        iti_poke_rpm = iti_poke / (cue_length_sec / 60)
+        if cue_length_sec > 0:
+            iti_poke_rpm = iti_poke / (cue_length_sec / 60)
+        else:
+            iti_poke_rpm = 0
         all_poke_iti_rpm += [iti_poke_rpm]
 
     return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3)
+
+
+def cue_iti_responding_PavCA(timecode, eventcode, code_on, code_off, counted_behavior):
+    """
+    :param timecode: list of time codes from operant conditioning file
+    :param eventcode: list of event codes from operant conditioning file
+    :param code_on: event code for the beginning of a cue
+    :param code_off: event code for the end of a cue
+    :param counted_behavior: event code for counted behavior
+    :return: mean rpm of head pokes during cue and mean rpm of head pokes during equivalent ITI preceding cue
+    """
+    cue_on = get_events_indices(eventcode, [code_on])
+    cue_off = get_events_indices(eventcode, [code_off])
+    if len(cue_on) != len(cue_off):
+        cue_off += get_events_indices(eventcode, ['EndSession'])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
+    all_poke_rpm = []
+    all_poke_iti_rpm = []
+
+    for i in range(len(cue_on)):
+        cue_on_idx = cue_on[i]
+        cue_off_idx = cue_off[i]
+        iti_on_idx = iti_on[i]
+        cue_length_sec = (timecode[cue_off_idx] - timecode[cue_on_idx])
+        if cue_length_sec > 0:
+            poke_rpm = ((eventcode[cue_on_idx:cue_off_idx].count(counted_behavior)) / (cue_length_sec / 60))
+        else:
+            poke_rpm = 0
+        all_poke_rpm += [poke_rpm]
+        iti_poke = 0
+        for x in range(iti_on_idx, cue_on_idx):
+            if eventcode[x] == counted_behavior and timecode[x] >= (timecode[cue_on_idx] - cue_length_sec):
+                iti_poke += 1
+        if cue_length_sec > 0:
+            iti_poke_rpm = iti_poke / (cue_length_sec / 60)
+        else:
+            iti_poke_rpm = 0
+        all_poke_iti_rpm += [iti_poke_rpm]
+
+    return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3), len([j for j in all_poke_rpm if j > 0])
 
 
 def binned_responding(timecode, eventcode, code_on, code_off, counted_behavior, trial_count):
@@ -258,6 +308,8 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
     """
     cue_on = get_events_indices(eventcode, [code_on])
     cue_off = get_events_indices(eventcode, [code_off])
+    if len(cue_on) != len(cue_off):
+        cue_off += get_events_indices(eventcode, ['EndSession'])
     iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
     all_poke_dur = []
     all_iti_poke_dur = []
@@ -353,6 +405,34 @@ def lever_press_latency(timecode, eventcode, lever_on, lever_press):
             press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
         else:
             pass
+
+    if len(press_latency) > 0:
+        return round(statistics.mean(press_latency), 3)
+    else:
+        return 0
+
+
+def lever_press_latency_PavCA(timecode, eventcode, lever_on, lever_press, pres_len):
+    """
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param lever_on: event name for lever presentation
+    :param lever_press: event name for lever press
+    :return: the mean latency to press the lever in seconds
+    """
+    lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
+    press_latency = []
+
+    for i in range(len(lever_on) - 1):
+        lever_on_idx = lever_on[i]
+        if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+            lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
+            if round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2) <= pres_len:
+                press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+            else:
+                press_latency += [10]
+        else:
+            press_latency += [10]
 
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
@@ -513,6 +593,35 @@ def RVI_nogo_latency(timecode, eventcode, lever_on):
             pass
 
     if len(press_latency) > 0:
+        return round(statistics.mean(press_latency), 3)
+    else:
+        return 0
+
+def lever_press_latency_Switch(timecode, eventcode):
+    """
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param lever_on: event name for lever presentation
+    :param lever_press: event name for lever press
+    :return: the mean latency to press the lever in seconds
+    """
+    lever_on = get_events_indices(eventcode, ['LLeverOn', 'RLeverOn', 'EndSession'])
+    press_latency = []
+
+    for i in range(len(lever_on) - 1):
+        lever_on_idx = lever_on[i]
+        if len(press_latency) < 10:
+            if 'LPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('LPressOn')
+                press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+            elif 'RPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('RPressOn')
+                press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+            else:
+                pass
+
+    if len(press_latency) > 0:
+        print(press_latency)
         return round(statistics.mean(press_latency), 3)
     else:
         return 0
