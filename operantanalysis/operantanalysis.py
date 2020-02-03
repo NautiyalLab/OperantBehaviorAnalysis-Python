@@ -621,7 +621,6 @@ def lever_press_latency_Switch(timecode, eventcode):
                 pass
 
     if len(press_latency) > 0:
-        print(press_latency)
         return round(statistics.mean(press_latency), 3)
     else:
         return 0
