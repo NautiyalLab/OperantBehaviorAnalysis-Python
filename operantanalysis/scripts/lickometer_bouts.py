@@ -2,7 +2,6 @@ from operantanalysis import concat_lickometer_files
 import numpy as np
 import pandas as pd
 import math
-import statistics
 
 days = int(input("How many days would you like to analyze?"))
 
@@ -71,4 +70,4 @@ for i in range(days):
     df4means.columns = ['Total Licks', 'Total Bouts', 'Bout Length', 'Lick Rate', 'Lick Rate 2 min']
     df = df.append(df4means)
 
-df.to_excel("summarydata.xlsx") # rows are total licks, total bouts, mean bout length, mean rate of licking during bouts, lick rate in first two minutes after first lick
+df.to_excel("summarydata.xlsx")
