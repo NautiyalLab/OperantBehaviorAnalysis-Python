@@ -5,8 +5,10 @@ from tkinter import filedialog
 from tkinter import *  # noqa
 import pandas as pd
 from .eventcodes import eventcodes_dictionary
+from natsort import natsorted, ns
 
-__all__ = ["loop_over_days", "load_file", "extract_info_from_file", "DNAMIC_extract_info_from_file",
+__all__ = ["loop_over_days", "load_file", "concat_lickometer_files",
+           "extract_info_from_file", "DNAMIC_extract_info_from_file",
            "DNAMIC_loop_over_days", "get_events_indices", "reward_retrieval", "cue_iti_responding",
            "cue_iti_responding_PavCA", "binned_responding",
            "cue_responding_duration", "lever_pressing", "lever_press_latency", "lever_press_latency_PavCA",
@@ -16,6 +18,28 @@ __all__ = ["loop_over_days", "load_file", "extract_info_from_file", "DNAMIC_extr
 
 
 def loop_over_days(column_list, behavioral_test_function):
+    """
+    :param column_list: list of strings/column titles for analysis that will be output in a table
+    :param behavioral_test_function: function that contains all the analysis functions to run on each file
+    :return: one concatenated data table of analysis for each animal for each day specified
+    """
+    days = int(input("How many days would you like to analyze?"))
+    df = pd.DataFrame(columns=column_list)
+
+    for i in range(days):
+        root = Tk()  # noqa
+        root.withdraw()
+        folder_selected = filedialog.askdirectory()
+        file_pattern = os.path.join(folder_selected, '*')
+        for file in sorted(glob.glob(file_pattern)):
+            loaded_file = load_file(file)
+            df2 = behavioral_test_function(loaded_file, i)
+            df = df.append(df2, ignore_index=True)
+
+    return days, df
+
+
+def loop_over_days_lickometer(column_list, behavioral_test_function):
     """
     :param column_list: list of strings/column titles for analysis that will be output in a table
     :param behavioral_test_function: function that contains all the analysis functions to run on each file
@@ -66,6 +90,45 @@ def load_file(filename):
             fields_dictionary[next_group[0]] = next_group[1]
 
     return fields_dictionary
+
+
+def concat_lickometer_files():
+    """
+    :return: data frame for lickometer analysis
+    """
+
+    files_list = []
+    root = Tk();
+    root.withdraw()
+
+    home = os.path.expanduser('~')  # returns the home directory on any OS --> ex) /Users/jhl
+    selected_folder = filedialog.askdirectory(initialdir = home)
+    file_pattern = os.path.join(selected_folder, '*.txt')
+    data_dict = {}
+    for fname in natsorted(glob.glob(file_pattern), alg=ns.IGNORECASE):  # loop through all the txt files
+        with open(fname, "r") as file:
+            filelines = file.readlines()  # read the lines in each file
+            subject_line = filelines[5]  # Animal ID will always be at the 6th index (5+1)
+            subject = subject_line.split(",")[-1].strip()  # subject will be the last element, strip any whitespaces!
+            values = filelines[-1].strip().split(",")  # Need to split by delimiter in order to make the list!
+            data_dict[subject] = values
+    lick_df = pd.DataFrame.from_dict(data_dict, orient='index')
+    lick_final = lick_df.T
+
+    # Delete row at index position 0 & 1
+    lick_final = lick_final.drop([lick_final.index[0]])  # to get rid of row of ones at top
+    lick_final.reset_index(inplace=True)
+
+    for c in lick_final.columns:
+        lick_final[c] = pd.to_numeric(lick_final[c], errors='coerce')
+
+    lick_final = lick_final.drop(lick_final.columns[[0]], axis=1)
+    lick_final.fillna(value=pd.np.nan, inplace=True)
+
+    lick_final.rename(columns=lick_final.iloc[0]).drop(lick_final.index[0])
+    lick_final.to_excel("output.xlsx")
+
+    return lick_final
 
 
 def extract_info_from_file(dictionary_from_file, time_conversion):
