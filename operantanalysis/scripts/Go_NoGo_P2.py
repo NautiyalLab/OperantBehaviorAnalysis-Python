@@ -1,5 +1,6 @@
 from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, \
     count_go_nogo_trials, num_successful_go_nogo_trials, lever_press_lat_gng_new
+
 import pandas as pd
 import matplotlib
 
@@ -16,14 +17,14 @@ def Go_NoGo(loaded_file, i):
     :return: data frame of all analysis extracted from file (one animal)
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
+    print(eventcode)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
    # (go_trials, nogo_trials) = count_go_nogo_trials(eventcode)
     # shouldn't just set num go/nogo to be constant?
     (go_trials) = 30
     (nogo_trials) = 30
     (successful_go_trials, successful_nogo_trials) = num_successful_go_nogo_trials(eventcode)
-    (press_latency_go, press_latency_nogo) = lever_press_lat_gng_new(
-        timecode, eventcode, ['LLeverOn','RLeverOn'], ['LPressOn','RPressOn'], ['LightOn1','LightOn2'])
+    (press_latency_go, press_latency_nogo) = lever_press_lat_gng_new(timecode, eventcode)
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(successful_go_trials),
@@ -36,7 +37,6 @@ def Go_NoGo(loaded_file, i):
                        columns=column_list)
 
     return df2
-
 
 (days, df) = loop_over_days(column_list, Go_NoGo)
 print(df.to_string())
