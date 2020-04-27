@@ -17,10 +17,7 @@ def Go_NoGo(loaded_file, i):
     :return: data frame of all analysis extracted from file (one animal)
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
-    print(eventcode)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
-   # (go_trials, nogo_trials) = count_go_nogo_trials(eventcode)
-    # shouldn't just set num go/nogo to be constant?
     (go_trials) = 30
     (nogo_trials) = 30
     (successful_go_trials, successful_nogo_trials) = num_successful_go_nogo_trials(eventcode)

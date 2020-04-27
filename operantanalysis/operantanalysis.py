@@ -632,14 +632,11 @@ def lever_press_lat_gng_new(timecode, eventcode):
     :return: the mean latency to press the lever in seconds
      """
     lever_on = get_events_indices(eventcode, ['LLeverOn', 'RLeverOn', 'EndSession'])
-    # light_on = get_events_indices(eventcode, ['LightOn1', 'EndSession'])
     press_latency_go = []
     press_latency_nogo = []
     
     for i in range(len(lever_on) - 1):
         lever_on_idx = lever_on[i]
-        print('on idx', lever_on_idx)
-        print(eventcode[lever_on_idx:lever_on[i + 1]])
         if 'LightOn1' in eventcode[lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
             print("Light on")
             if 'LPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
