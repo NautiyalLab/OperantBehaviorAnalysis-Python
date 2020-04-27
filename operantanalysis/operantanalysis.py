@@ -638,14 +638,14 @@ def lever_press_lat_gng_new (timecode, eventcode, lever_on, lever_press, light_o
     
     for i in range(len(lever_on) - 1):
         lever_on_idx = lever_on[i]
-        if light_on in [lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
+        if light_on in eventcode[lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
             light_on_idx = light_on[i]
-            if lever press in [light_on_idx:light_on[i+1]: # can use same idxing for lever and light ?
+            if lever_press in eventcode[light_on_idx:light_on[i+1]]: # can use same idxing for lever and light ?
                 lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
                 press_latency_nogo += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
             else: pass #this means nogo trial without lever press
         else: #if lever on but light isnt, then go trial
-            if lever press in [lever_on_idx:lever_on[i+1]
+            if lever_press in eventcode[lever_on_idx:lever_on[i+1]]:
                 lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
                 press_latency_go += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
             else: pass #this means go trial without lever press
