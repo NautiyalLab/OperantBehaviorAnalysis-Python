@@ -29,6 +29,7 @@ def crf_function(loaded_file, i):
 
 (days, df) = loop_over_days(column_list, crf_function)
 print(df.to_string())
+df.to_excel("output.xlsx")
 
 group_means = df.groupby(['Day', 'Subject'])['Dippers', 'Total Presses'].mean().unstack()
 group_sems = df.groupby(['Day', 'Subject'])['Dippers', 'Total Presses'].sem().unstack()

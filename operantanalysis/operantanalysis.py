@@ -594,6 +594,66 @@ def lever_press_lat_gng(timecode, eventcode, lever_on, lever_press):
         return round(statistics.mean(press_latency), 3)
     else:
         return 0
+"""
+def lever_press_lat_gng(timecode, eventcode, lever_on, lever_press):
+    
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param lever_on: event name for lever presentation
+    :param lever_press: event name for lever press
+    :return: the mean latency to press the lever in seconds
+    
+    lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
+    go_trial = get_events_indices(eventcode, [go_start, 'EndSession'])
+    nogo_trial = get_events_indices(eventcode, [nogo_start, 'EndSession'])
+    
+    for i in range(len(lever_on) - 1):
+        for j in range(len(go_trial)-1): #recall len(go_trial) = 30 should be true
+            go_trial_idx = go_trial[j]
+            if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
+                press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+            else pass
+        for range of nogo trial
+            if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+                calculate press latency nogo
+            else pass
+    if latency > 0, return round press latency to 2 digits
+    else return 0
+#############################################   
+"""
+def lever_press_lat_gng_new (timecode, eventcode, lever_on, lever_press, light_on):
+    """
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param lever_on: event name for lever presentation
+    :param lever_press: event name for lever press
+    :param light_on: event name for led light on (as in nogo trial)
+    :return: the mean latency to press the lever in seconds
+     """
+    lever_on = get_events_indices(eventcode, [lever_on, 'EndSession'])
+    light_on = get_events_indices(eventcode, [light_on, 'EndSession'])
+    press_latency_go = []
+    press_latency_nogo = []
+    
+    for i in range(len(lever_on) - 1):
+        lever_on_idx = lever_on[i]
+        if light_on in [lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
+            light_on_idx = light_on[i]
+            if lever press in [light_on_idx:light_on[i+1]: # can use same idxing for lever and light ?
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
+                press_latency_nogo += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+            else: pass #this means nogo trial without lever press
+        else: #if lever on but light isnt, then go trial
+            if lever press in [lever_on_idx:lever_on[i+1]
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
+                press_latency_go += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
+            else: pass #this means go trial without lever press
+    
+    if len(press_latency) > 0:
+        return round(statistics.mean(press_latency_go), 3), round(statistics.mean(press_latency_nogo), 3)
+    else: return 0
+
 
 
 def RVI_gng_weird(timecode, eventcode, lever_on, lever_press):
