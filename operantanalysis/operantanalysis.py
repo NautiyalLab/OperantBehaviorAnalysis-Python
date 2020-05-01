@@ -636,7 +636,7 @@ def lever_press_lat_gng_new(timecode, eventcode, lever_press, nogo_start):
     
     for i in range(len(lever_on) - 1):
         lever_on_idx = lever_on[i]
-        if light_on in eventcode[lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
+        if nogo_start in eventcode[lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
             # print("Light on")
             if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
                 lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
