@@ -626,9 +626,7 @@ def lever_press_lat_gng_new(timecode, eventcode):
     """
     :param timecode: list of times (in seconds) when events occurred
     :param eventcode: list of events that happened in a session
-    :param lever_on: event name for lever presentation
-    :param lever_press: event name for lever press
-    :param light_on: event name for led light on (as in nogo trial)
+    :param nogo_start: event name beginning of nogo trial (ie led light on)
     :return: the mean latency to press the lever in seconds
      """
     lever_on = get_events_indices(eventcode, ['LLeverOn', 'RLeverOn', 'EndSession'])
@@ -658,9 +656,14 @@ def lever_press_lat_gng_new(timecode, eventcode):
                 print('Went to pass')
                 pass # this means go trial without lever press
 
-    if len(press_latency_go) > 0 or len(press_latency_nogo) > 0:
-        return round(statistics.mean(press_latency_go), 3), round(statistics.mean(press_latency_nogo), 3)
-    else: return 0
+    if len(press_latency_go) > 0:
+        press_latency_go = round(statistics.mean(press_latency_go), 3)
+    else: press_latency_go = 0
+    if len(press_latency_nogo) >0:
+        press_latency_nogo = round(statistics.mean(press_latency_nogo), 3)
+    else: press_latency_nogo = 0
+
+    return press_latency_nogo, press_latency_go
 
 
 

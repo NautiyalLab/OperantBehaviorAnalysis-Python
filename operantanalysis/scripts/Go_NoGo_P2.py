@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt  # noqa
 column_list = ['Subject', 'Day', 'Dippers', 'Successful Go Trials', 'Successful NoGo Trials', 'Hit Rate',
                'False Alarm Rate', 'Lever Press Latency Go', 'Lever Press Latency NoGo', 'Impulsivity Index']
 
+
 def Go_NoGo(loaded_file, i):
     """
     :param loaded_file: file output from operant box
@@ -21,6 +22,7 @@ def Go_NoGo(loaded_file, i):
     (go_trials) = 30
     (nogo_trials) = 30
     (successful_go_trials, successful_nogo_trials) = num_successful_go_nogo_trials(eventcode)
+    print('newday')
     (press_latency_go, press_latency_nogo) = lever_press_lat_gng_new(timecode, eventcode)
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
@@ -34,6 +36,7 @@ def Go_NoGo(loaded_file, i):
                        columns=column_list)
 
     return df2
+
 
 (days, df) = loop_over_days(column_list, Go_NoGo)
 print(df.to_string())
@@ -59,13 +62,13 @@ group_means['False Alarm Rate'].plot(legend=True, yerr=group_sems['False Alarm R
 plt.ylabel('False Alarm Rate')
 
 group_means['Lever Press Latency Go'].plot(legend=True, yerr=group_sems['Lever Press Latency Go'],
-                                        xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3,
-                                        elinewidth=1)
+                                           xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3,
+                                           elinewidth=1)
 plt.ylabel('Lever Press Latency Go')
 
 group_means['Lever Press Latency NoGo'].plot(legend=True, yerr=group_sems['Lever Press Latency NoGo'],
-                                        xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3,
-                                        elinewidth=1)
+                                             xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3,
+                                             elinewidth=1)
 plt.ylabel('Lever Press Latency NoGo')
 
 group_means['Impulsivity Index'].plot(legend=True, yerr=group_sems['Impulsivity Index'],
