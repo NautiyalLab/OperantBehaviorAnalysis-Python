@@ -19,6 +19,7 @@ def Go_NoGo(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
+    (go_trials, nogo_trials) = count_go_nogo_trials(eventcode)
     (successful_go_trials, successful_nogo_trials) = num_successful_go_nogo_trials(eventcode)
     lr_press = ['LPressOn', 'RPressOn']
     light_on = 'LightOn1'
