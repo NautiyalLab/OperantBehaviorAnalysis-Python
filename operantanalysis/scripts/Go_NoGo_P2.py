@@ -19,11 +19,10 @@ def Go_NoGo(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
-    (go_trials) = 30
-    (nogo_trials) = 30
     (successful_go_trials, successful_nogo_trials) = num_successful_go_nogo_trials(eventcode)
-    print('newday')
-    (press_latency_go, press_latency_nogo) = lever_press_lat_gng_new(timecode, eventcode)
+    lr_press = ['LPressOn', 'RPressOn']
+    light_on = 'LightOn1'
+    (press_latency_go, press_latency_nogo) = lever_press_lat_gng_new(timecode, eventcode, lr_press, light_on)
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(successful_go_trials),

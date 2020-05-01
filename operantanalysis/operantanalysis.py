@@ -622,10 +622,11 @@ def lever_press_lat_gng(timecode, eventcode, lever_on, lever_press):
     else return 0
 #############################################   
 """
-def lever_press_lat_gng_new(timecode, eventcode):
+def lever_press_lat_gng_new(timecode, eventcode, lever_press, nogo_start):
     """
     :param timecode: list of times (in seconds) when events occurred
     :param eventcode: list of events that happened in a session
+    :param lever_press: event name(s) for when lever(s) pressed
     :param nogo_start: event name beginning of nogo trial (ie led light on)
     :return: the mean latency to press the lever in seconds
      """
@@ -635,26 +636,18 @@ def lever_press_lat_gng_new(timecode, eventcode):
     
     for i in range(len(lever_on) - 1):
         lever_on_idx = lever_on[i]
-        if 'LightOn1' in eventcode[lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
-            print("Light on")
-            if 'LPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
-                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('LPressOn')
-                press_latency_nogo += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
-            elif 'RPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
-                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('RPressOn')
+        if light_on in eventcode[lever_on_idx:lever_on[i + 1]]: # this nesting order OK since MEDPC has light-on AFTER lever-on
+            # print("Light on")
+            if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
                 press_latency_nogo += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
             else: pass # this means nogo trial without lever press
         else: # if lever on but light isnt, then go trial
-            print("no light")
-            if 'LPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
-                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('LPressOn')
+            # print("no light")
+            if lever_press in eventcode[lever_on_idx:lever_on[i + 1]]:
+                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
                 press_latency_go += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
-            elif 'RPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
-                lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('RPressOn')
-                press_latency_go += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
-            else:
-                print('Went to pass')
-                pass # this means go trial without lever press
+            else: pass # this means go trial without lever press
 
     if len(press_latency_go) > 0:
         press_latency_go = round(statistics.mean(press_latency_go), 3)
