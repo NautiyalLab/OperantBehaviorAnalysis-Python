@@ -102,7 +102,7 @@ def concat_lickometer_files():
     root.withdraw()
 
     home = os.path.expanduser('~')  # returns the home directory on any OS --> ex) /Users/jhl
-    selected_folder = filedialog.askdirectory(initialdir = home)
+    selected_folder = filedialog.askdirectory(initialdir=home)
     file_pattern = os.path.join(selected_folder, '*.txt')
     data_dict = {}
     for fname in natsorted(glob.glob(file_pattern), alg=ns.IGNORECASE):  # loop through all the txt files
@@ -596,7 +596,7 @@ def lever_press_lat_gng(timecode, eventcode, lever_on, lever_press):
         return 0
 
 
-def RVI_gng_weird(timecode, eventcode, lever_on, lever_press):
+def RVI_gng_weird(timecode, eventcode, lever_on, lever_press, cue_length):
     """
     :param timecode: list of times (in seconds) when events occurred
     :param eventcode: list of events that happened in a session
@@ -614,12 +614,12 @@ def RVI_gng_weird(timecode, eventcode, lever_on, lever_press):
             lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index(lever_press)
             press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
         else:
-            pass
+            press_latency += [cue_length]
 
     final_press_latency = []
 
     for x in press_latency:
-        if x >= 5:
+        if x > cue_length:
             incorrect_trials += 1
         else:
             final_press_latency += [x]
@@ -630,7 +630,7 @@ def RVI_gng_weird(timecode, eventcode, lever_on, lever_press):
         return 0, incorrect_trials
 
 
-def RVI_nogo_latency(timecode, eventcode, lever_on):
+def RVI_nogo_latency(timecode, eventcode, lever_on, cue_length):
     """
     :param timecode: list of times (in seconds) when events occurred
     :param eventcode: list of events that happened in a session
@@ -646,19 +646,20 @@ def RVI_nogo_latency(timecode, eventcode, lever_on):
         lever_on_idx = lever_on[i]
         if 'LPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
             lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('LPressOn')
-            if timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx] < 5:
+            if timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx] < cue_length:
                 press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
         elif 'RPressOn' in eventcode[lever_on_idx:lever_on[i + 1]]:
             lever_press_idx = eventcode[lever_on_idx:lever_on[i + 1]].index('RPressOn')
-            if timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx] < 5:
+            if timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx] < cue_length:
                 press_latency += [round(timecode[lever_on_idx + lever_press_idx] - timecode[lever_on_idx], 2)]
         else:
-            pass
+            press_latency += [cue_length]
 
     if len(press_latency) > 0:
         return round(statistics.mean(press_latency), 3)
     else:
         return 0
+
 
 def lever_press_latency_Switch(timecode, eventcode):
     """
