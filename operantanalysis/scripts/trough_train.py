@@ -1,10 +1,9 @@
-from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval
+from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, cue_responding_duration,\
+    total_head_pokes
 import pandas as pd
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt  # noqa
 
-column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency']
+column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency', 'Avg Poke Dur', 'Tot Poke Dur',
+               'Total Pokes Count']
 
 
 def trough_train_function(loaded_file, i):
@@ -15,26 +14,20 @@ def trough_train_function(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
+    (ind_dur, tot_dur, ind_dur_iti, tot_dur_iti) = cue_responding_duration(timecode, eventcode, 'StartSession', 'EndSession', "PokeOn1", "PokeOff1")
+    # ITI is meaningless here because we are using the whole session
+    total_pokes = total_head_pokes(eventcode)
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers), float(dippers_retrieved),
-                         float(retrieval_latency)]], columns=column_list)
+                         float(retrieval_latency), float(ind_dur), float(tot_dur), float(total_pokes)]],
+                       columns=column_list)
 
     return df2
 
 
 (days, df) = loop_over_days(column_list, trough_train_function)
 print(df.to_string())
+df.to_excel("output.xlsx")
 
 group_means = df.groupby(['Day'])['Dippers Retrieved', 'Retrieval Latency'].mean()
 group_sems = df.groupby(['Day'])['Dippers Retrieved', 'Retrieval Latency'].sem()
-
-plt.subplot(121)
-group_means['Dippers Retrieved'].plot(legend=True, yerr=group_sems['Dippers Retrieved'], ylim=[0, 60], xlim=[0, days + 1],
-                                      xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Dippers Retrieved')
-
-plt.subplot(122)
-group_means['Retrieval Latency'].plot(legend=True, yerr=group_sems['Retrieval Latency'], xlim=[0, days + 1],
-                                      xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Retrieval Latency (sec)')
-plt.show()
