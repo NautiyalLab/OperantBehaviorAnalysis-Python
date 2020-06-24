@@ -14,7 +14,7 @@ def pavCA(loaded_file, i):
     """
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
-    if loaded_file['Con'] == 'U':
+    if loaded_file['MSN'] == 'PavCA_LeftUnpaired_2020' or loaded_file['MSN'] == 'PavCA_RightUnpaired_2020':
         (inactive_poke, inactive_iti_poke, trials_w_poke) = cue_iti_responding_PavCA(timecode, eventcode, 'NoRewardTrialStart', 'NoRewardTrialEnd', 'PokeOn1')
         (inactive_press, inactive_iti_press, trials_w_press) = cue_iti_responding_PavCA(timecode, eventcode, 'NoRewardTrialStart', 'NoRewardTrialEnd', 'InactivePress')
         poke_lat = lever_press_latency_PavCA(timecode, eventcode, 'NoRewardTrialStart', 'PokeOn1', 10)
@@ -24,7 +24,7 @@ def pavCA(loaded_file, i):
         prob_poke = trials_w_poke / 35
         prob_press = trials_w_press / 35
         iti_poke = inactive_iti_poke
-    elif loaded_file['Con'] == 'P':
+    elif loaded_file['MSN'] == 'PavCA_LeftPaired_2020' or loaded_file['MSN'] == 'PavCA_RightPaired_2020':
         (active_poke, active_iti_poke, trials_w_poke) = cue_iti_responding_PavCA(timecode, eventcode, 'RewardTrialStart', 'RewardTrialEnd', 'PokeOn1')
         (active_press, active_iti_press, trials_w_press) = cue_iti_responding_PavCA(timecode, eventcode, 'RewardTrialStart', 'RewardTrialEnd', 'ActivePress')
         poke_lat = lever_press_latency_PavCA(timecode, eventcode, 'RewardTrialStart', 'PokeOn1', 10)

@@ -30,13 +30,3 @@ def signtracking(loaded_file, i):
 (days, df) = loop_over_days(column_list, signtracking)
 print(df.to_string())
 df.to_excel("output.xlsx")
-
-group_means = df.groupby(['Day'])['Inactive Poke Rate', 'Inactive Press Rate', 'Active Poke Rate',
-                                  'Active Press Rate'].mean().unstack()
-group_sems = df.groupby(['Day'])['Inactive Poke Rate', 'Inactive Press Rate', 'Active Poke Rate',
-                                 'Active Press Rate'].sem().unstack()
-
-print(df.groupby(['Day'])['Inactive Poke Rate', 'Inactive Press Rate', 'Active Poke Rate',
-                          'Active Press Rate'].mean().unstack().to_string())
-print(df.groupby(['Day'])['Inactive Poke Rate', 'Inactive Press Rate', 'Active Poke Rate',
-                          'Active Press Rate'].sem().unstack().to_string())

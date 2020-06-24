@@ -28,13 +28,3 @@ def CI_training_function(loaded_file, i):
 (days, df) = loop_over_days(column_list, CI_training_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
-
-group_means = df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
-                                               'Noise ITI', 'Inhibitor Pokes Duration', 'Inhibitor ITI'].mean()
-group_sems = df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
-                                              'Noise ITI', 'Inhibitor Pokes Duration', 'Inhibitor ITI'].sem()
-
-print(df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration', 'Noise ITI',
-                                              'Inhibitor Pokes Duration', 'Inhibitor ITI'].mean().unstack().to_string())
-print(df.groupby(['Day', 'Condition'])['Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration', 'Noise ITI',
-                                              'Inhibitor Pokes Duration', 'Inhibitor ITI'].sem().unstack().to_string())

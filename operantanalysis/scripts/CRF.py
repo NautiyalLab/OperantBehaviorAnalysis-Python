@@ -38,21 +38,3 @@ def crf_function(loaded_file, i):
 (days, df) = loop_over_days(column_list, crf_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
-
-group_means = df.groupby(['Day'])['Dippers', 'Total Presses'].mean().unstack()
-group_sems = df.groupby(['Day'])['Dippers', 'Total Presses'].sem().unstack()
-
-print(group_means)
-print(group_sems)
-
-plt.subplot(121)
-group_means['Total Presses'].plot(legend=True, yerr=group_sems['Total Presses'],
-                                  xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Total Presses')
-
-plt.subplot(122)
-group_means['Dippers'].plot(legend=True, yerr=group_sems['Dippers'], ylim=[0, 60],
-                            xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Dippers')
-
-plt.show()

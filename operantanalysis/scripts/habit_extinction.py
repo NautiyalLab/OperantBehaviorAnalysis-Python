@@ -31,12 +31,3 @@ binned_columns = [col for col in df.columns if type(col) == int]
 
 dfnew = pd.melt(df, id_vars=['Subject', 'Sex', 'Day', 'Training', 'Lever Presses'], value_vars=binned_columns,
                 var_name='Bin', value_name='Lever_Pressing_During_Bin')
-
-group_means = dfnew.groupby(['Bin', 'Training'])['Lever_Pressing_During_Bin'].mean().unstack()
-group_sems = dfnew.groupby(['Bin', 'Training'])['Lever_Pressing_During_Bin'].sem().unstack()
-
-group_means.plot(legend=True, yerr=group_sems, xlim=[0, 20], xticks=(range(5, 20, 5)), marker='o', capsize=3, elinewidth=1)
-
-plt.ylabel('Lever Presses')
-plt.xlabel('Time (min)')
-plt.show()

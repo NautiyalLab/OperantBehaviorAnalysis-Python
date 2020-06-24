@@ -27,14 +27,3 @@ def habit_training_function(loaded_file, i):
 
 (days, df) = loop_over_days(column_list, habit_training_function)
 
-group_means = df.groupby(['Day', 'Training'])['Dippers', 'Lever Presses'].mean().unstack()
-group_sems = df.groupby(['Day', 'Training'])['Dippers', 'Lever Presses'].sem().unstack()
-
-group_means['Lever Presses'].plot(legend=True, yerr=group_sems['Lever Presses'],
-                                  xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Lever Presses')
-
-group_means['Dippers'].plot(legend=True, yerr=group_sems['Dippers'], ylim=[0, 60],
-                            xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Dippers')
-plt.show()

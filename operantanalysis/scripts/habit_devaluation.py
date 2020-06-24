@@ -24,14 +24,3 @@ def habit_training_function(loaded_file, i):
 
 (days, df) = loop_over_days(column_list, habit_training_function)
 
-group_means = df.groupby(['Day', 'Training'])['Dippers', 'Retrieval Latency'].mean().unstack()
-group_sems = df.groupby(['Day', 'Training'])['Dippers', 'Retrieval Latency'].sem().unstack()
-
-group_means['Retrieval Latency'].plot(legend=True, yerr=group_sems['Retrieval Latency'], xticks=(range(1, days + 1, 1)),
-                                      xlim=[0, days + 1], marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Retrieval Latency (sec)')
-
-group_means['Dippers'].plot(legend=True, yerr=group_sems['Dippers'], ylim=[0, 30],
-                            xlim=[0, days + 1], xticks=(range(1, days + 1, 1)), marker='o', capsize=3, elinewidth=1)
-plt.ylabel('Dippers')
-plt.show()

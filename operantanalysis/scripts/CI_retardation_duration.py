@@ -22,9 +22,3 @@ def CI_retardation_function(loaded_file, i):
 (days, df) = loop_over_days(column_list, CI_retardation_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
-
-group_means = df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].mean()
-group_sems = df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].sem()
-
-print(df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].mean().unstack().to_string())
-print(df.groupby(['Day', 'Condition'])['Light Poke Duration', 'LightITI'].sem().unstack().to_string())

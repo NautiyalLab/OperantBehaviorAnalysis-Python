@@ -24,9 +24,3 @@ def CI_summation_function(loaded_file, i):
 (days, df) = loop_over_days(column_list, CI_summation_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
-
-group_means = df.groupby(['Day', 'Condition'])['Noise Poke Duration', 'Noise ITI', 'Inhibitor Poke Duration', 'Inhibitor ITI'].mean()
-group_sems = df.groupby(['Day', 'Condition'])['Noise Poke Duration', 'Noise ITI', 'Inhibitor Poke Duration', 'Inhibitor ITI'].sem()
-
-print(df.groupby(['Day', 'Condition'])['Noise Poke Duration', 'Noise ITI', 'Inhibitor Poke Duration', 'Inhibitor ITI'].mean().unstack().to_string())
-print(df.groupby(['Day', 'Condition'])['Noise Poke Duration', 'Noise ITI', 'Inhibitor Poke Duration', 'Inhibitor ITI'].sem().unstack().to_string())
