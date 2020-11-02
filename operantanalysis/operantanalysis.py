@@ -14,7 +14,8 @@ __all__ = ["loop_over_days", "load_file", "concat_lickometer_files",
            "cue_responding_duration", "lever_pressing", "lever_press_latency", "lever_press_latency_PavCA",
            "total_head_pokes",
            "num_successful_go_nogo_trials", "count_go_nogo_trials", "num_switch_trials", "bin_by_time",
-           "lever_press_lat_gng", "RVI_gng_weird", "RVI_nogo_latency", "lever_press_latency_Switch"]
+           "lever_press_lat_gng", "RVI_gng_weird", "RVI_nogo_latency", "lever_press_latency_Switch",
+           "response_rate_across_cue_iti", "duration_across_cue_iti"]
 
 
 def loop_over_days(column_list, behavioral_test_function):
@@ -70,7 +71,7 @@ def load_file(filename):
         filelines = fileref.readlines()
 
     fields_dictionary = {}
-    
+
     for line in filelines:
         if line[0] != ' ' and line[0] != '\n':
             name = line.split(':')[0]
@@ -80,10 +81,10 @@ def load_file(filename):
         elif line[0] == ' ':
             fields_dictionary[name] += line
             fields_dictionary[name] = fields_dictionary[name].replace('\n', '')
-            
+
     group_identities = fields_dictionary['Group'].split('/')
     fields_dictionary['Group'] = group_identities.pop(0)
-    
+
     for remaining in group_identities:
         if ':' in remaining:
             next_group = remaining.split(':')
@@ -323,7 +324,8 @@ def cue_iti_responding_PavCA(timecode, eventcode, code_on, code_off, counted_beh
             iti_poke_rpm = 0
         all_poke_iti_rpm += [iti_poke_rpm]
 
-    return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3), len([j for j in all_poke_rpm if j > 0])
+    return round(statistics.mean(all_poke_rpm), 3), round(statistics.mean(all_poke_iti_rpm), 3), len(
+        [j for j in all_poke_rpm if j > 0])
 
 
 def binned_responding(timecode, eventcode, code_on, code_off, counted_behavior, trial_count):
@@ -396,7 +398,8 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
                 poke_dur = timecode[x] - timecode[x - 1]
                 all_poke_dur += [poke_dur]
                 in_cue_duration += poke_dur
-            elif eventcode[x] == counted_behavior_on and (eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
+            elif eventcode[x] == counted_behavior_on and (
+                    eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
                 poke_dur = timecode[x + 1] - timecode[x]
                 all_poke_dur += [poke_dur]
                 in_cue_duration += poke_dur
@@ -408,11 +411,13 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
                     poke_dur = timecode[x] - timecode[x - 1]
                     all_iti_poke_dur += [poke_dur]
                     iti_cue_duration += poke_dur
-                elif eventcode[x] == code_off and eventcode[x - 1] == code_on and eventcode[x + 1] == counted_behavior_off:
+                elif eventcode[x] == code_off and eventcode[x - 1] == code_on and eventcode[
+                    x + 1] == counted_behavior_off:
                     poke_dur = timecode[x] - timecode[x - 1]
                     all_iti_poke_dur += [poke_dur]
                     iti_cue_duration += poke_dur
-                elif eventcode[x] == counted_behavior_on and (eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
+                elif eventcode[x] == counted_behavior_on and (
+                        eventcode[x + 1] == counted_behavior_off or eventcode[x + 1] == code_off):
                     poke_dur = timecode[x + 1] - timecode[x]
                     all_iti_poke_dur += [poke_dur]
                     iti_cue_duration += poke_dur
@@ -427,8 +432,8 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
     if not all_iti_poke_dur:
         all_iti_poke_dur += [0]
 
-    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3),\
-        round(statistics.mean(all_iti_poke_dur), 3), round(statistics.mean(all_iti_duration), 3)
+    return round(statistics.mean(all_poke_dur), 3), round(statistics.mean(all_cue_duration), 3), \
+           round(statistics.mean(all_iti_poke_dur), 3), round(statistics.mean(all_iti_duration), 3)
 
 
 def lever_pressing(eventcode, lever1, lever2=False):
@@ -439,7 +444,7 @@ def lever_pressing(eventcode, lever1, lever2=False):
     :return: count of first lever presses, second lever presses, and total lever presses, as int
     """
     lever1_presses = eventcode.count(lever1)
-           
+
     if lever2:
         lever2_presses = eventcode.count(lever2)
     else:
@@ -532,7 +537,7 @@ def count_go_nogo_trials(eventcode):
             nogo_trials += 1
         else:
             go_trials += 1
-                      
+
     return go_trials, nogo_trials
 
 
@@ -688,3 +693,145 @@ def lever_press_latency_Switch(timecode, eventcode):
         return round(statistics.mean(press_latency), 3)
     else:
         return 0
+
+
+def response_rate_across_cue_iti(timecode, eventcode, code_on, code_off, counted_behavior):
+    """
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param code_on: event name for lever presentation
+    :param code_off: event name for lever press
+    :param code_off: event name for lever press
+    :return: 3 lists of cue, iti, and the subtracted responding across seconds
+    """
+    cue_on = get_events_indices(eventcode, [code_on])
+    cue_off = get_events_indices(eventcode, [code_off])
+    if len(cue_on) != len(cue_off):
+        cue_off += get_events_indices(eventcode, ['EndSession'])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
+    cue_length_sec = int(timecode[cue_off[6]] - timecode[cue_on[6]])
+    all_cue_length_poke_rates = [0] * cue_length_sec
+    all_iti_length_poke_rates = [0] * cue_length_sec
+
+    for i in range(len(cue_on)):
+        cue_on_idx = cue_on[i]
+        cue_off_idx = cue_off[i]
+        iti_on_idx = iti_on[i]
+        cue_length_poke_rates = []
+        iti_length_poke_rates = []
+        for y in range(int(cue_length_sec)):
+            pokes = 0
+            iti_pokes = 0
+            for x in range(cue_on_idx, cue_off_idx):
+                if eventcode[x] == counted_behavior and (timecode[cue_on_idx] + y) <= timecode[x] < (
+                        timecode[cue_on_idx] + y + 1):
+                    pokes += 1
+                else:
+                    pokes += 0
+            cue_length_poke_rates += [pokes]
+            for t in range(iti_on_idx, cue_on_idx):
+                if eventcode[t] == counted_behavior and (timecode[cue_on_idx] - (cue_length_sec - y)) \
+                        <= timecode[t] < (timecode[cue_on_idx] - (cue_length_sec - (y + 1))):
+                    iti_pokes += 1
+                else:
+                    iti_pokes += 0
+            iti_length_poke_rates += [iti_pokes]
+        all_cue_length_poke_rates = [cue_length_poke_rates[i] + all_cue_length_poke_rates[i] for i in
+                                     range(len(all_cue_length_poke_rates))]
+        all_iti_length_poke_rates = [iti_length_poke_rates[i] + all_iti_length_poke_rates[i] for i in
+                                     range(len(all_iti_length_poke_rates))]
+
+    all_cue_length_poke_rates = [all_cue_length_poke_rates[i] / len(cue_on) for i in
+                                 range(len(all_cue_length_poke_rates))]
+    all_iti_length_poke_rates = [all_iti_length_poke_rates[i] / len(cue_on) for i in
+                                 range(len(all_iti_length_poke_rates))]
+    subtracted_poke_rates = [all_cue_length_poke_rates[i] - all_iti_length_poke_rates[i] for i in
+                             range(len(all_cue_length_poke_rates))]
+
+    return all_cue_length_poke_rates, all_iti_length_poke_rates, subtracted_poke_rates
+
+
+def duration_across_cue_iti(timecode, eventcode, code_on, code_off, counted_behavior_on, counted_behavior_off):
+    """
+    :param timecode: list of times (in seconds) when events occurred
+    :param eventcode: list of events that happened in a session
+    :param code_on: event name for lever presentation
+    :param code_off: event name for lever press
+    :param code_off: event name for lever press
+    :return: 3 lists of cue, iti, and the subtracted responding across seconds
+    """
+    cue_on = get_events_indices(eventcode, [code_on])
+    cue_off = get_events_indices(eventcode, [code_off])
+    poke_on = get_events_indices(eventcode, [counted_behavior_on])
+    poke_off = get_events_indices(eventcode, [counted_behavior_off])
+    if len(cue_on) != len(cue_off):
+        cue_off += get_events_indices(eventcode, ['EndSession'])
+    cue_length_sec = int(timecode[cue_off[6]] - timecode[cue_on[6]])
+    all_cue_length_poke_dur = [0] * int(cue_length_sec)
+    all_iti_length_poke_dur = [0] * int(cue_length_sec)
+
+    for i in range(len(cue_on)):
+        cue_on_idx = cue_on[i]
+        cue_off_idx = cue_off[i]
+        cue_length_poke_dur = []
+        iti_length_poke_dur = []
+        for y in range(int(cue_length_sec)):
+            poke_dur = 0
+            iti_poke_dur = 0
+            for c in range(len(poke_off)):
+                # pokes that span whole seconds
+                if timecode[poke_on[c]] < (timecode[cue_on_idx] + y) and timecode[poke_off[c]] > \
+                        (timecode[cue_on_idx] + y + 1):
+                    poke_dur += 1
+                    break
+                # pokes contained within a second
+                elif (timecode[cue_on_idx] + y) <= timecode[poke_on[c]] < timecode[poke_off[c]] \
+                        < (timecode[cue_on_idx] + y + 1):
+                    poke_dur += timecode[poke_off[c]] - timecode[poke_on[c]]
+                # pokes that start in a second of a cue
+                elif (timecode[cue_on_idx] + y) <= timecode[poke_on[c]] < (timecode[cue_on_idx] + y + 1) \
+                        < timecode[poke_off[c]]:
+                    poke_dur += ((timecode[cue_on_idx] + y + 1) - timecode[poke_on[c]])
+                # pokes that end in a second of a cue
+                elif timecode[poke_on[c]] < (timecode[cue_on_idx] + y) <= timecode[poke_off[c]] \
+                        < (timecode[cue_on_idx] + y + 1):
+                    poke_dur += (timecode[poke_off[c]] - (timecode[cue_on_idx] + y))
+                # pokes not occurring in the cue
+                else:
+                    poke_dur += 0
+            cue_length_poke_dur += [round(poke_dur, 3)]
+            for d in range(len(poke_off)):
+                # pokes that span whole seconds
+                if timecode[poke_on[d]] < (timecode[cue_on_idx] - (cue_length_sec - y)) and timecode[poke_off[d]] \
+                        > (timecode[cue_on_idx] - (cue_length_sec - (y + 1))):
+                    iti_poke_dur += 1
+                    break
+                # pokes contained within a second
+                elif (timecode[cue_on_idx] - (cue_length_sec - y)) <= timecode[poke_on[d]] < timecode[poke_off[d]] \
+                        < (timecode[cue_on_idx] - (cue_length_sec - (y + 1))):
+                    iti_poke_dur += (timecode[poke_off[d]] - timecode[poke_on[d]])
+                # pokes that start in a second of an ITI
+                elif (timecode[cue_on_idx] - (cue_length_sec - y)) <= timecode[poke_on[d]] \
+                        < (timecode[cue_on_idx] - (cue_length_sec - (y + 1))) < timecode[poke_off[d]]:
+                    iti_poke_dur += ((timecode[cue_on_idx] - (cue_length_sec - (y + 1))) - timecode[poke_on[d]])
+                # pokes that end in a second of an ITI
+                elif timecode[poke_on[d]] < (timecode[cue_on_idx] - (cue_length_sec - y)) <= timecode[poke_off[d]] \
+                        < (timecode[cue_on_idx] - (cue_length_sec - (y + 1))):
+                    iti_poke_dur += (timecode[poke_off[d]] - (timecode[cue_on_idx] - (cue_length_sec - y)))
+                # pokes not occurring in the ITI
+                else:
+                    iti_poke_dur += 0
+            iti_length_poke_dur += [round(iti_poke_dur, 3)]
+        all_cue_length_poke_dur = [cue_length_poke_dur[i] + all_cue_length_poke_dur[i] for i in
+                                   range(len(all_cue_length_poke_dur))]
+        all_iti_length_poke_dur = [iti_length_poke_dur[i] + all_iti_length_poke_dur[i] for i in
+                                   range(len(all_iti_length_poke_dur))]
+
+    all_cue_length_poke_dur = [all_cue_length_poke_dur[i] / len(cue_on) for i in
+                               range(len(all_iti_length_poke_dur))]
+    all_iti_length_poke_dur = [all_iti_length_poke_dur[i] / len(cue_on) for i in
+                               range(len(all_iti_length_poke_dur))]
+    subtracted_poke_dur = [all_cue_length_poke_dur[i] - all_iti_length_poke_dur[i] for i in
+                           range(len(all_cue_length_poke_dur))]
+
+    return all_cue_length_poke_dur, all_iti_length_poke_dur, subtracted_poke_dur
