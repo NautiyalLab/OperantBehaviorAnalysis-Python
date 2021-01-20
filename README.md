@@ -76,3 +76,4 @@ to execute certain things from the command line and adding in some graphing func
 - Animals receive randomly delivered rewards (20 minutes), given LiCl, then placed back in context (20 minutes)
 - Reward delivery is the same as TT2, so that analysis can be used here
 ### Visualization of Session
+- I will be adding some of that in the Command Line branch. 
