@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+
 from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, cue_responding_duration,\
-    total_head_pokes
+    total_head_pokes, display_line_graph
 import pandas as pd
+import matplotlib.pyplot as plt
 
 column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency', 'Avg Poke Dur', 'Tot Poke Dur',
                'Total Pokes Count']
@@ -28,3 +31,14 @@ def trough_train_function(loaded_file, i):
 (days, df) = loop_over_days(column_list, trough_train_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
+
+graph_toggle = input('Would you like to see graphs of dipper retrieval and latency (Y/n)?    ')
+
+if graph_toggle=='Y':
+    latency_DF = display_line_graph(df, 'Retrieval Latency')
+    dipper_DF = display_line_graph(df, 'Dippers Retrieved')
+    # The below is important to prevent hanging terminal after closing graph windows. 
+    plt.show(block=False)
+    plt.pause(0.001) 
+    input("hit[enter] to end.")
+    plt.close('all') # all open plots are correctly closed after each run)

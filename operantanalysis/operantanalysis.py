@@ -1,11 +1,15 @@
+#!/usr/bin/env python
+
 import statistics
 import os
 import glob
 from tkinter import filedialog
 from tkinter import *  # noqa
 import pandas as pd
-from .eventcodes import eventcodes_dictionary
+from eventcodes import eventcodes_dictionary
 from natsort import natsorted, ns
+import matplotlib.pyplot as plt
+import numpy as np
 
 __all__ = ["loop_over_days", "load_file", "concat_lickometer_files",
            "extract_info_from_file", "DNAMIC_extract_info_from_file",
@@ -835,3 +839,97 @@ def duration_across_cue_iti(timecode, eventcode, code_on, code_off, counted_beha
                            range(len(all_cue_length_poke_dur))]
 
     return all_cue_length_poke_dur, all_iti_length_poke_dur, subtracted_poke_dur
+
+
+
+def display_line_graph(data_frame, event_name):
+    """
+    :param data_frame: a long-form DataFrame containing data of interest.
+    :param event_name: Column from data_frame to be graphed.
+    :return: Creates a plot object that can be displayed with plt.show()
+    """
+
+    # Begin by compiling and sorting a list of subject IDs.
+    try:
+        subject_ids = set(data_frame.loc[:, 'Subject'])
+        subject_column_name='Subject'
+    except:
+        # If subject IDs aren't where expected, ask the user
+        subject_column_name = input('Unable to find column "Subject". What is the column name?    ')
+        subject_ids = set(data_frame.loc[:, subject_column_name])
+    subject_ids = sorted(subject_ids)
+
+
+    # Next, do the EXACT same for days. (Copied for ease of variable naming.)
+    try:
+        run_days = set(data_frame.loc[:, 'Day'])
+        day_column_name='Day'
+    except:
+        day_column_name = input('Unable to find column "Day". What is the column name?    ')
+        run_days = set(data_frame.loc[:, day_column_name])
+    run_days = sorted(run_days)
+
+
+    # Use the verified column names to ensure that data_frame is sorted by Day in ascending order.
+    data_frame.sort_values(by=[day_column_name], ascending=True, inplace=True)
+
+    # Then create and populate the short-form DataFrame
+    short_form_DF = pd.DataFrame(index=subject_ids, columns=run_days)
+
+    plt.figure(event_name)
+    for mouse in subject_ids:
+        mouse_idx = data_frame[data_frame[subject_column_name]==mouse].index
+        raw_mouse_data = data_frame.loc[mouse_idx, event_name].values
+
+        short_form_DF.loc[mouse, run_days] = raw_mouse_data
+
+        plt.plot(range(1, len(run_days)+1), raw_mouse_data, marker='o')
+
+    plt.title(event_name)
+    plt.xlabel('Days')
+
+
+
+    # The below is taken from https://stackoverflow.com/a/47166787
+    # Someday, it would be nice to try to adapt this to display the 
+    # subject ID upon mousing over each line. 
+    # x = np.sort(np.random.rand(15))
+    # y = np.sort(np.random.rand(15))
+    # names = np.array(list("ABCDEFGHIJKLMNO"))
+
+    # norm = plt.Normalize(1,4)
+    # cmap = plt.cm.RdYlGn
+
+    # fig,ax = plt.subplots()
+    # line, = plt.plot(x,y, marker="o")
+
+    # annot = ax.annotate("", xy=(0,0), xytext=(-20,20),textcoords="offset points",
+    #                     bbox=dict(boxstyle="round", fc="w"),
+    #                     arrowprops=dict(arrowstyle="->"))
+    # annot.set_visible(False)
+
+    # def update_annot(ind):
+    #     x,y = line.get_data()
+    #     annot.xy = (x[ind["ind"][0]], y[ind["ind"][0]])
+    #     text = "{}, {}".format(" ".join(list(map(str,ind["ind"]))), 
+    #                            " ".join([names[n] for n in ind["ind"]]))
+    #     annot.set_text(text)
+    #     annot.get_bbox_patch().set_alpha(0.4)
+
+
+    # def hover(event):
+    #     vis = annot.get_visible()
+    #     if event.inaxes == ax:
+    #         cont, ind = line.contains(event)
+    #         if cont:
+    #             update_annot(ind)
+    #             annot.set_visible(True)
+    #             fig.canvas.draw_idle()
+    #         else:
+    #             if vis:
+    #                 annot.set_visible(False)
+    #                 fig.canvas.draw_idle()
+
+    # fig.canvas.mpl_connect("motion_notify_event", hover)
+
+    # plt.show()
