@@ -22,19 +22,36 @@ __all__ = ["loop_over_days", "load_file", "concat_lickometer_files",
            "response_rate_across_cue_iti", "duration_across_cue_iti"]
 
 
-def loop_over_days(column_list, behavioral_test_function):
+def loop_over_days(column_list, behavioral_test_function, master_data_folder=''):
     """
     :param column_list: list of strings/column titles for analysis that will be output in a table
     :param behavioral_test_function: function that contains all the analysis functions to run on each file
+    :param master_data_folder: A directory which contains all single-day directories of interest. Used instead
+                               of GUI selection with Tk. Path provided by sys.argv in executing script.
     :return: one concatenated data table of analysis for each animal for each day specified
     """
-    days = int(input("How many days would you like to analyze?"))
+    
+    # If a data folder is passed, skip user input.
+    if master_data_folder == '':
+        days = int(input("How many days would you like to analyze?"))
+        gui=True    
+    else:
+        data_folders = glob.glob(os.path.join(master_data_folder, '*'))
+        days = len(data_folders)
+        gui=False
+
     df = pd.DataFrame(columns=column_list)
 
     for i in range(days):
-        root = Tk()  # noqa
-        root.withdraw()
-        folder_selected = filedialog.askdirectory()
+        # Ask user to specify data folder if necessary. 
+        if gui:
+            root = Tk()  # noqa
+            root.withdraw()
+            folder_selected = filedialog.askdirectory()
+        else:
+            folder_selected = data_folders[i]
+
+        # Iterate over single animal datafiles in current folder.
         file_pattern = os.path.join(folder_selected, '*')
         for file in sorted(glob.glob(file_pattern)):
             loaded_file = load_file(file)

@@ -4,6 +4,8 @@ from operantanalysis import loop_over_days, extract_info_from_file, reward_retri
     total_head_pokes, display_line_graph
 import pandas as pd
 import matplotlib.pyplot as plt
+from sys import argv
+import os
 
 column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency', 'Avg Poke Dur', 'Tot Poke Dur',
                'Total Pokes Count']
@@ -27,10 +29,26 @@ def trough_train_function(loaded_file, i):
 
     return df2
 
+# If user provided an argument at execution, use this to find data. 
+try:
+    data_directory = argv[1]
+# Otherwise, store it as an empty string so loop_over_days knows to use GUI.
+except IndexError:
+    data_directory = ''
 
-(days, df) = loop_over_days(column_list, trough_train_function)
+(days, df) = loop_over_days(column_list, trough_train_function, master_data_folder=data_directory)
 print(df.to_string())
-df.to_excel("output.xlsx")
+
+
+# If user provided multiple arguments at execution, use the second one as the save path for the output folder.
+try:
+    save_path = os.path.join(argv[2], 'output.xlsx')
+    df.to_excel(save_path)
+# Otherwise, save the DataFrame to the current working directory.
+except IndexError:
+    df.to_excel("output.xlsx")
+
+
 
 graph_toggle = input('Would you like to see graphs of dipper retrieval and latency (Y/n)?    ')
 
