@@ -898,7 +898,14 @@ def display_line_graph(data_frame, event_name):
         mouse_idx = data_frame[data_frame[subject_column_name]==mouse].index
         raw_mouse_data = data_frame.loc[mouse_idx, event_name].values
 
-        short_form_DF.loc[mouse, run_days] = raw_mouse_data
+        try:
+            short_form_DF.loc[mouse, run_days] = raw_mouse_data
+        # In the rare case that an animal is run twice in a day (e.g. during trough training)
+        # There will be a value error. Just drop a data point for ease of graphing here. 
+        except ValueError:
+            print(f'{mouse} has {len(raw_mouse_data)} datapoints, but there are only {len(run_days)} run days.')
+            day_to_drop = int(input('Which datapoint would you like to drop (enter 0-ordered index)?    '))
+            raw_mouse_data = np.delete(raw_mouse_data, day_to_drop)
 
         plt.plot(range(1, len(raw_mouse_data)+1), raw_mouse_data, marker='o')
 
