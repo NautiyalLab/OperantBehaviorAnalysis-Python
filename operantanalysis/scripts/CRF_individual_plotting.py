@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing
 
 import pandas as pd
