@@ -900,7 +900,7 @@ def display_line_graph(data_frame, event_name):
 
         short_form_DF.loc[mouse, run_days] = raw_mouse_data
 
-        plt.plot(range(1, len(run_days)+1), raw_mouse_data, marker='o')
+        plt.plot(range(1, len(raw_mouse_data)+1), raw_mouse_data, marker='o')
 
     plt.title(event_name)
     plt.xlabel('Days')
