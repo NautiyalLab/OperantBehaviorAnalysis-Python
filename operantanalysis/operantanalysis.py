@@ -10,6 +10,7 @@ from eventcodes import eventcodes_dictionary
 from natsort import natsorted, ns
 import matplotlib.pyplot as plt
 import numpy as np
+import datetime
 
 __all__ = ["loop_over_days", "load_file", "concat_lickometer_files",
            "extract_info_from_file", "DNAMIC_extract_info_from_file",
@@ -37,6 +38,7 @@ def loop_over_days(column_list, behavioral_test_function, master_data_folder='')
         gui=True    
     else:
         data_folders = glob.glob(os.path.join(master_data_folder, '*'))
+        data_folders = natsorted(data_folders)
         days = len(data_folders)
         gui=False
 
