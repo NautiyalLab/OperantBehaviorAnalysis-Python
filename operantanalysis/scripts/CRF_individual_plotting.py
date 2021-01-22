@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing
 
