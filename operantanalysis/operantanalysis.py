@@ -906,6 +906,7 @@ def display_line_graph(data_frame, event_name):
         # There will be a value error. Just drop a data point for ease of graphing here. 
         except ValueError:
             print(f'{mouse} has {len(raw_mouse_data)} datapoints, but there are only {len(run_days)} run days.')
+            print(data_frame.loc[mouse_idx])
             day_to_drop = int(input('Which datapoint would you like to drop (enter 0-ordered index)?    '))
             raw_mouse_data = np.delete(raw_mouse_data, day_to_drop)
 
