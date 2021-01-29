@@ -1,9 +1,13 @@
-from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing
+#!/usr/bin/env python3
+
+from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, lever_pressing, display_line_graph
 #    lever_press_latency, cue_iti_responding
 import pandas as pd
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
+from sys import argv
+import os
 
 column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
                'Left Lever Presses', 'Right Lever Presses', 'Total Presses']
@@ -34,7 +38,35 @@ def crf_function(loaded_file, i):
     
     return df2
 
+# If user provided an argument at execution, use this to find data. 
+try:
+    data_directory = argv[1]
+# Otherwise, store it as an empty string so loop_over_days knows to use GUI.
+except IndexError:
+    data_directory = ''
 
-(days, df) = loop_over_days(column_list, crf_function)
+
+(days, df) = loop_over_days(column_list, crf_function, master_data_folder=data_directory)
 print(df.to_string())
-df.to_excel("output.xlsx")
+
+# If user provided multiple arguments at execution, use the second one as the save path for the output folder.
+try:
+    save_path = os.path.join(argv[2], 'output.xlsx')
+    df.to_excel(save_path)
+# Otherwise, save the DataFrame to the current working directory.
+except IndexError:
+    df.to_excel("output.xlsx")
+
+
+graph_toggle = input('Would you like to see graphs of dipper retrieval, latency, and lever presses (Y/n)?    ')
+
+if graph_toggle=='Y':
+    latency_DF = display_line_graph(df, 'Retrieval Latency')
+    dipper_DF = display_line_graph(df, 'Dippers Retrieved')
+    lever_DF = display_line_graph(df, 'Total Presses')
+
+    # The below is important to prevent hanging terminal after closing graph windows. 
+    plt.show(block=False)
+    plt.pause(0.001) 
+    input("hit[enter] to end.")
+    plt.close('all') # all open plots are correctly closed after each run)
