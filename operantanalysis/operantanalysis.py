@@ -23,6 +23,24 @@ __all__ = ["loop_over_days", "load_file", "concat_lickometer_files",
            "response_rate_across_cue_iti", "duration_across_cue_iti"]
 
 
+def date_sort_key(date_as_string, date_fmt = '%b_%d_%y', date_grep_fmt = '\w{3}_\d{1,2}_\d{2}'):
+    '''
+    :param date_as_string: a string containing a date, typically from a file or directory name
+    :param date_fmt: The formatting to use with datetime to extract the raw date information.
+                     A default is provided for ease of use. 
+    :param date_grep_fmt: A pattern used to pull the date itself out of date_as_string. 
+                          Default matches that of date_fmt. 
+    :return: A tuple containing date information in Month, Day, Year order to be used by 
+                      a sort function, such as sorted, as a key for sorting a list of dates. 
+    '''
+
+    sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
+
+    date_info = datetime.datetime.strptime(date_as_string, date_fmt)
+
+    return date_info.month, date, year
+
+
 def loop_over_days(column_list, behavioral_test_function, master_data_folder=''):
     """
     :param column_list: list of strings/column titles for analysis that will be output in a table
@@ -38,7 +56,15 @@ def loop_over_days(column_list, behavioral_test_function, master_data_folder='')
         gui=True    
     else:
         data_folders = glob.glob(os.path.join(master_data_folder, '*'))
-        data_folders = natsorted(data_folders)
+        data_folders = natsorted(data_folders, key=date_sort_key)
+        print('I found {}'.format(data_folders))
+        continue_script = input('Are these in the right order (y/n)    ?')
+        if continue_script =='y':
+            pass
+        elif continue_script=='n':
+            date_fmt = input('Enter desired date format string for strptime:    ')
+            regex_fmt = input('Enter desired regex pattern to match date string:    ')
+            data_folders = natsorted(data_folders, key=date_sort_key(date_fmt=date_fmt, date_grep_fmt=regex_fmt))
         days = len(data_folders)
         gui=False
 
@@ -858,6 +884,8 @@ def duration_across_cue_iti(timecode, eventcode, code_on, code_off, counted_beha
                            range(len(all_cue_length_poke_dur))]
 
     return all_cue_length_poke_dur, all_iti_length_poke_dur, subtracted_poke_dur
+
+
 
 
 
