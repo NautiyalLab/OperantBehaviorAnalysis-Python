@@ -36,9 +36,9 @@ def date_sort_key(date_as_string, date_fmt = '%b_%d_%y', date_grep_fmt = '\w{3}_
 
     sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
 
-    date_info = datetime.datetime.strptime(date_as_string, date_fmt)
+    date_info = datetime.datetime.strptime(sanitized_string_date, date_fmt)
 
-    return date_info.month, date, year
+    return date_info.month, date_info.day, date_info.year
 
 
 def loop_over_days(column_list, behavioral_test_function, master_data_folder=''):
@@ -58,7 +58,7 @@ def loop_over_days(column_list, behavioral_test_function, master_data_folder='')
         data_folders = glob.glob(os.path.join(master_data_folder, '*'))
         data_folders = natsorted(data_folders, key=date_sort_key)
         print('I found {}'.format(data_folders))
-        continue_script = input('Are these in the right order (y/n)    ?')
+        continue_script = input('Are these in the right order (y/n)?    ')
         if continue_script =='y':
             pass
         elif continue_script=='n':
