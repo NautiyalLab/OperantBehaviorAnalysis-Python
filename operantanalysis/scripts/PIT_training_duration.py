@@ -3,7 +3,7 @@ import pandas as pd
 
 
 column_list = ['Subject', 'Condition', 'Day', 'CS+ Pokes Duration', 'CS+ ITI', 'CS- Pokes Duration',
-               'CS- ITI', 'CS+ Elevation Score', 'CS+ Elevation Score']
+               'CS- ITI', 'CS+ Elevation Score', 'CS- Elevation Score']
 
 
 def PIT_training_function(loaded_file, i):
