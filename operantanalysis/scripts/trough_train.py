@@ -23,9 +23,18 @@ def trough_train_function(loaded_file, i):
     # ITI is meaningless here because we are using the whole session
     total_pokes = total_head_pokes(eventcode)
 
+   file_keys = list(loaded_file.keys())
+    for constant in ['File', 'Start Date', 'End Date', 'Subject', 'Experiment', 'Group', 'Box', 'Start Time', 'End Time', 'MSN', 'W']:
+        file_keys.remove(constant)
+
+    # All that's left in the list file_keys should be any group labels. 
+    group_ids = []
+    for group in file_keys:
+        group_ids.append(loaded_file[group])
+
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers), float(dippers_retrieved),
-                         float(retrieval_latency), float(ind_dur), float(tot_dur), float(total_pokes)]],
-                       columns=column_list)
+                         float(retrieval_latency), float(ind_dur), float(tot_dur), float(total_pokes), *group_ids]],
+                       columns=column_list+file_keys)
 
     return df2
 
