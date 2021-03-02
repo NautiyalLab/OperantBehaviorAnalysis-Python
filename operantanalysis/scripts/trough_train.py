@@ -23,7 +23,7 @@ def trough_train_function(loaded_file, i):
     # ITI is meaningless here because we are using the whole session
     total_pokes = total_head_pokes(eventcode)
 
-   file_keys = list(loaded_file.keys())
+    file_keys = list(loaded_file.keys())
     for constant in ['File', 'Start Date', 'End Date', 'Subject', 'Experiment', 'Group', 'Box', 'Start Time', 'End Time', 'MSN', 'W']:
         file_keys.remove(constant)
 
