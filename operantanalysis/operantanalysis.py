@@ -34,7 +34,23 @@ def date_sort_key(date_as_string, date_fmt = '%b_%d_%y', date_grep_fmt = '\w{3}_
                       a sort function, such as sorted, as a key for sorting a list of dates. 
     '''
 
-    sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
+    # Ensure separator between year, month, and day is underscore.
+    date_as_string = date_as_string.replace('-', '_')
+    
+    try:
+        sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
+    except AttributeError:
+        # If the desired string is not matched, re.search will return NoneType and 
+        # group(0) will yield an AttributeError. 
+        print(f'The date is {date_as_string}\n\
+                The regex pattern is {date_grep_fmt}\n\
+                The datetime format is {date_fmt}.)')
+        date_grep_fmt = input('Enter desired regex pattern to match date string:    ')
+        date_fmt = input('Enter desired date format string for strptime:    ')
+
+        # and then try it again.
+        sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
+
 
     date_info = datetime.datetime.strptime(sanitized_string_date, date_fmt)
 
