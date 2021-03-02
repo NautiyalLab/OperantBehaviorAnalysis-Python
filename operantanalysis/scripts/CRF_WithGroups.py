@@ -31,11 +31,19 @@ def crf_function(loaded_file, i):
 #    elif 'RLeverOn' in eventcode:
 #        press_latency = lever_press_latency(timecode, eventcode, 'RLeverOn', 'RPressOn')
 #        (lever_press_rate, iti_rate) = cue_iti_responding(timecode, eventcode, 'StartSession', 'EndSession', 'RPressOn')
+    
+    file_keys = list(loaded_file.keys())
+    for constant in ['File', 'Start Date', 'End Date', 'Subject', 'Experiment', 'Group', 'Box', 'Start Time', 'End Time', 'MSN', 'W']:
+        file_keys.remove(constant)
 
+    # All that's left in the list file_keys should be any group labels. 
+    group_ids = []
+    for group in file_keys:
+        group_ids.append(loaded_file[group])
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(dippers_retrieved), float(retrieval_latency), float(left_presses),
-                         float(right_presses), float(total_presses)]], columns=column_list)
+                         float(right_presses), float(total_presses), *group_ids]], columns=column_list+file_keys)
     
     return df2
 
