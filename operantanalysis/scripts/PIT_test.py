@@ -18,6 +18,6 @@ def PIT_test_function(loaded_file, i):
     return df2
 
 
-(days, df) = loop_over_days(column_list, PIT_test)
+(days, df) = loop_over_days(column_list, PIT_test_function)
 print(df.to_string())
 df.to_excel("output.xlsx")
