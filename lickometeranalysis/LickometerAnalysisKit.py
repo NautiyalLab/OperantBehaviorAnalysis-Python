@@ -163,7 +163,7 @@ def gen_summary_dataframe(animal_dataframes, animals, experiment_label, group_by
 
 
     total_dataframe = total_dataframe.astype(retype_dict)
-    total_dataframe.to_csv('MasterDataFrame_{experiment_label}.csv')
+    total_dataframe.to_csv(f'MasterDataFrame_{experiment_label}.csv')
     # Will create a multi-index of (AnimalID, Presentation #).
     # This will permit easy access to each animal's data. Because each presentation # only occurs
         # once per animal, neither sum() nor mean() will actually alter the data.  
