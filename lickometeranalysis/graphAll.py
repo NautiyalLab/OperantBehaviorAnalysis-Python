@@ -62,8 +62,15 @@ else:
 
 
 
-# Pull the name of the directory containing files to use as 
+# Pull the name of the directory containing files to use as .png name. 
+
+if path_to_files[-1] == path.sep:
+    # If the last character in the path is a separator, remove that character.
+        # Otherwise path.basename(path_to_folder) will return nothing.
+    path_to_files = path_to_files[:-1]
+
 base_folder_name = path.basename(path_to_files)
+print(f'Saving figures with name: {base_folder_name}')
 
 target_file_search_term = path.join(path_to_files, '*.txt')
 files = glob.glob(target_file_search_term)
