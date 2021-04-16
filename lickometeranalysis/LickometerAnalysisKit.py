@@ -171,6 +171,135 @@ def gen_summary_dataframe(animal_dataframes, animals, experiment_label, group_by
     return total_dataframe, total_dataframe_by_animal
 
 
+##### DATA PROCESSING FUNCTIONS ##### 
+
+def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, burst_threshold = 1000, subject_grouping_data = None):
+    '''
+    :PARAM ili_data: a dictionary containing interlick intervals (produced by read_raw_files())
+    :PARAM animal_dataframes: df_dictionary from read_raw_files. Used to determine presentations during which different solutions were given.
+    :PARAM animals: a list of animal IDs. 
+    :PARAM concentrations: a list of the concentrations presented during testing.
+    :PARAM burst_threshold: the cutoff (in ms) for defining bursts. Defaults to 1000 ms based on literature (e.g. 10.1016/j.appet.2009.12.007)
+    :PARAM subject_grouping_data: an optional dataframe (index = animal IDs, columns = independent variable labels)
+                                  containing grouping data. 
+    :RETURN lick_df: a pandas DataFrame containing data summarizing interlick interval data across subjects and concentrations. 
+    '''
+
+    ##SET UP DATAFRAME##
+
+    column_labels = ['Total_Licks', 'Burst_Threshold', 'Burst_Number', 'Avg_BurstLength', 'AvgLicksInBurst']
+    if subject_grouping_data!=None:
+        # If user has provided grouping data, include group labels. 
+        column_labels.extend(subject_grouping_data.columns)
+
+    # Create a multi-index if user provided more than a single concentration.
+    if len(concentrations) == 1:
+        lick_df_index = animals
+    else:
+        lick_df_index = pd.MultiIndex.from_product([concentrations, animals], names=['Concentration', 'SubjectID'])
+
+    lick_df = pd.DataFrame(index = lick_df_index, columns = column_labels)
+
+
+    ##CALCULATE METRICS##
+
+    for concentration in concentrations:
+        for animal in animals:
+            # Pull the presentation numbers during which target concentration was presented. 
+            presentations = animal_dataframes[animal][animal_dataframes[animal].CONCENTRATION==concentration].loc[:, 'PRESENTATION'].values
+
+            total_licks = 0
+            burst_count = 0
+            burst_lengths = {'Time': [], 'Licks': []}
+            for presentation in presentations:
+                # Pull the raw data out for ease of processing. 
+                ilis = np.array(ili_data[animal][presentation])
+
+                # Count total licks
+                total_licks+=ilis.size
+                
+
+                #Identify bursts
+                    # licks in a burst will be 2 or more consecutive events separated by the threshold or less. 
+
+                # Any number below threshold corresponds to a lick within a burst with the following caveats:
+                    # The first lick is marked as "0". There is no guarantee that more licks follow, however. 
+                    # The first lick in a bout will always be marked False because, definitionally, it must occur
+                        # more than burst_threshold milliseconds after the last lick.
+                ilis_under_thresh = ilis<=burst_threshold
+                # To make the first bout consistent with all others, the first value is set to False based on logic above.
+                ilis_under_thresh[0] = False
+
+                # Identify burst edges. 
+                transitions = np.diff(ilis_under_thresh.astype(int))
+                #  1: Corresponds to False followed by True. Indicates 2nd lick in burst (see above)
+                # -1: Corresponds to True followed by False. Indicates end of burst.
+                #  0: Indicates False-False or True-True. Indicates no state change. 
+
+                # The number of occurrences of -1 will be the number of bursts.  
+                burst_count+=sum(transitions==1)
+                
+                # If no bursts are detected, skip. 
+                if sum(transitions)<1:
+                    continue
+
+                # Gets the indices of all second licks. 
+
+                second_lick_indices = np.nonzero(transitions==1)
+                burst_idxs = []
+                for idx in second_lick_indices[0]: # np.nonzero returns a tuple of arrays for each input dimension.                    
+                    # The indices of transitions and ilis are offset by one because of np.diff.
+                    # Therefore, the index of the second lick in a bout in "transitions" will be the same 
+                        # as the index of the first lick in "ilis"
+                    
+                    # Start the list licks for the current burst with the first ili.
+                    burst = [ilis[idx]]
+                    
+                    # Set the "active ili" as that of the second lick because it is definitely below threshold
+                    i = idx+1
+                    ili = ilis[i]
+
+                    # Iterate over ilis starting from second lick in burst and continue adding to list as 
+                        # long as they are below threshold. 
+                    while ili <= burst_threshold:
+                        burst.append(ili)
+                        i+=1
+                        try:
+                            ili = ilis[i]
+                        except:
+                            # If the last lick in a presentation period is part of a burst, attempting
+                                # to increment "ilis[i]" will result in an index error. The loop is done.
+                            break
+                    burst_idxs.append(burst)                                
+
+
+
+                # Calculate the total time from first lick to last lick (i.e. the sum of ilis excluding the firsts)
+                    # for each presentation and save the average.
+                burst_lengths['Time'].append(np.mean([sum(burst[1:]) for burst in burst_idxs]))
+
+                # Use the same logic to count the average number of licks in each bout. 
+                burst_lengths['Licks'].append(np.mean([len(burst) for burst in burst_idxs]))
+           
+            # POPULATE DATAFRAME
+
+            # Determine index format. 
+            if len(concentrations) == 1:
+                row_index = animal
+            else:
+                row_index = (concentration, animal)
+
+
+            lick_df.loc[row_index, 'Total_Licks'] = total_licks
+            lick_df.loc[row_index, 'Burst_Threshold'] = burst_threshold
+            lick_df.loc[row_index, 'Burst_Number'] = burst_count
+            lick_df.loc[row_index, 'Avg_BurstLength'] = np.mean(burst_lengths['Time'])
+            lick_df.loc[row_index, 'AvgLicksInBurst'] = np.mean(burst_lengths['Licks'])
+
+
+
+    return lick_df
+
 
 ##### GRAPHING FUNCTIONS ##### 
 
