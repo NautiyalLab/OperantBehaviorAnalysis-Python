@@ -180,7 +180,7 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, e
     :PARAM animals: a list of animal IDs. 
     :PARAM concentrations: a list of the concentrations presented during testing.
     :PARAM experiment_label: A string to use for labeling the comma separated value file. 
-    :PARAM burst_threshold: the cutoff (in ms) for defining bursts. Defaults to 1000 ms based on literature (e.g. 10.1016/j.appet.2009.12.007)
+    :PARAM burst_threshold: tohe cutoff (in ms) for defining bursts. Defaults to 1000 ms based on literature (e.g. 10.1016/j.appet.2009.12.007)
     :PARAM subject_grouping_data: an optional dataframe (index = animal IDs, columns = independent variable labels)
                                   containing grouping data. 
     :RETURN lick_df: a pandas DataFrame containing data summarizing interlick interval data across subjects and concentrations. 
