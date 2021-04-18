@@ -297,9 +297,9 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, e
             lick_df.loc[row_index, 'Avg_BurstLength'] = np.mean(burst_lengths['Time'])
             lick_df.loc[row_index, 'AvgLicksInBurst'] = np.mean(burst_lengths['Licks'])
 
-		    if subject_grouping_data!=None:
-		    	for ind_var in subject_grouping_data.columns:
-		    		lick_df.loc[row_index, ind_var] = subject_grouping_data.loc[animal, ind_var]
+            if subject_grouping_data!=None:
+                for ind_var in subject_grouping_data.columns:
+                    lick_df.loc[row_index, ind_var] = subject_grouping_data.loc[animal, ind_var]
 
 
 
