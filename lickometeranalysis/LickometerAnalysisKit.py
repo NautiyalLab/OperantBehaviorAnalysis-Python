@@ -173,12 +173,13 @@ def gen_summary_dataframe(animal_dataframes, animals, experiment_label, group_by
 
 ##### DATA PROCESSING FUNCTIONS ##### 
 
-def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, burst_threshold = 1000, subject_grouping_data = None):
+def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, experiment_label, burst_threshold = 1000, subject_grouping_data = None):
     '''
     :PARAM ili_data: a dictionary containing interlick intervals (produced by read_raw_files())
     :PARAM animal_dataframes: df_dictionary from read_raw_files. Used to determine presentations during which different solutions were given.
     :PARAM animals: a list of animal IDs. 
     :PARAM concentrations: a list of the concentrations presented during testing.
+    :PARAM experiment_label: A string to use for labeling the comma separated value file. 
     :PARAM burst_threshold: the cutoff (in ms) for defining bursts. Defaults to 1000 ms based on literature (e.g. 10.1016/j.appet.2009.12.007)
     :PARAM subject_grouping_data: an optional dataframe (index = animal IDs, columns = independent variable labels)
                                   containing grouping data. 
@@ -296,7 +297,13 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, b
             lick_df.loc[row_index, 'Avg_BurstLength'] = np.mean(burst_lengths['Time'])
             lick_df.loc[row_index, 'AvgLicksInBurst'] = np.mean(burst_lengths['Licks'])
 
+		    if subject_grouping_data!=None:
+		    	for ind_var in subject_grouping_data.columns:
+		    		lick_df.loc[row_index, ind_var] = subject_grouping_data.loc[animal, ind_var]
 
+
+
+    lick_df.to_csv(f'LickBoutData_{experiment_label}.csv')
 
     return lick_df
 
