@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import LickometerAnalysisKit
+import pandas as pd
 import glob
 import natsort
 from sys import argv

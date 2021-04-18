@@ -189,9 +189,12 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, e
     ##SET UP DATAFRAME##
 
     column_labels = ['Total_Licks', 'Burst_Threshold', 'Burst_Number', 'Avg_BurstLength', 'AvgLicksInBurst']
-    if subject_grouping_data!=None:
+    try:
         # If user has provided grouping data, include group labels. 
         column_labels.extend(subject_grouping_data.columns)
+    except AttributeError: 
+        pass
+
 
     # Create a multi-index if user provided more than a single concentration.
     if len(concentrations) == 1:
@@ -219,6 +222,10 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, e
                 # Count total licks
                 total_licks+=ilis.size
                 
+                if len(ilis)<2:
+                    # If there are fewer than two licks, there's no burst.
+                    continue
+
 
                 #Identify bursts
                     # licks in a burst will be 2 or more consecutive events separated by the threshold or less. 
@@ -241,7 +248,7 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, e
                 burst_count+=sum(transitions==1)
                 
                 # If no bursts are detected, skip. 
-                if sum(transitions)<1:
+                if sum(transitions==1)<1:
                     continue
 
                 # Gets the indices of all second licks. 
@@ -297,10 +304,11 @@ def summarize_lick_bouts(ili_data, animal_dataframes, animals, concentrations, e
             lick_df.loc[row_index, 'Avg_BurstLength'] = np.mean(burst_lengths['Time'])
             lick_df.loc[row_index, 'AvgLicksInBurst'] = np.mean(burst_lengths['Licks'])
 
-            if subject_grouping_data!=None:
+            try:
                 for ind_var in subject_grouping_data.columns:
                     lick_df.loc[row_index, ind_var] = subject_grouping_data.loc[animal, ind_var]
-
+            except AttributeError: 
+                pass
 
 
     lick_df.to_csv(f'LickBoutData_{experiment_label}.csv')
