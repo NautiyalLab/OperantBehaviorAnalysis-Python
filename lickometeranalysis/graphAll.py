@@ -7,6 +7,18 @@ from os import path
 from tkinter import filedialog
 from tkinter import *  # noqa
 
+'''
+This script will perform basic processing of .ms8.txt files produced by the MED-Associates
+legacy-Davis Rig Lickometer. 
+
+USAGE:
+
+graphAll.py [path_to_files, use_first_block, no_normalization, group_by_TUBE]
+reads in raw files and executes gen_summary_dataframe, graph_cumulative_licks, individual_graph_by_group, and summarize_licking_curve
+'''
+
+
+
 ##### PREAMBLE #####
 
 # Safely remove script name from list of arguments . 
