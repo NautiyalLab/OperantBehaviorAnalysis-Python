@@ -99,6 +99,7 @@ if len(files) == 0:
 df_dict, ili_dict, animals = LickometerAnalysisKit.read_raw_files(files)
 # Create DataFrames
 total_df, total_df_by_animals = LickometerAnalysisKit.gen_summary_dataframe(df_dict, animals, base_folder_name,
+                                                                            drop_first_block=drop_first_block,
                                                                             group_by_concentration=bool(grouping_criteria=='CONCENTRATION'))
 
 # Make graphs.
