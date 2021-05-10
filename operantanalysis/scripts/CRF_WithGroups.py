@@ -8,9 +8,11 @@ matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt  # noqa
 from sys import argv
 import os
+import datetime
+
 
 column_list = ['Subject', 'Day', 'Dippers', 'Dippers Retrieved', 'Retrieval Latency',
-               'Left Lever Presses', 'Right Lever Presses', 'Total Presses']
+               'Left Lever Presses', 'Right Lever Presses', 'Total Presses', 'Session Length (s)']
 
 
 def crf_function(loaded_file, i):
@@ -22,6 +24,11 @@ def crf_function(loaded_file, i):
     (timecode, eventcode) = extract_info_from_file(loaded_file, 500)
     (dippers, dippers_retrieved, retrieval_latency) = reward_retrieval(timecode, eventcode)
     (left_presses, right_presses, total_presses) = lever_pressing(eventcode, 'LPressOn', 'RPressOn')
+
+    start_time = datetime.datetime.strptime(f'{loaded_file["Start Date"]} {loaded_file["Start Time"]}', '%m/%d/%y %H:%M:%S')
+    end_time = datetime.datetime.strptime(f'{loaded_file["End Date"]} {loaded_file["End Time"]}', '%m/%d/%y %H:%M:%S')
+    sess_length = end_time - start_time
+    sess_length = sess_length.seconds
 
 #    Use this code for latencies and rates
 #
@@ -43,7 +50,7 @@ def crf_function(loaded_file, i):
 
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(dippers_retrieved), float(retrieval_latency), float(left_presses),
-                         float(right_presses), float(total_presses), *group_ids]], columns=column_list+file_keys)
+                         float(right_presses), float(total_presses), float(sess_length), *group_ids]], columns=column_list+file_keys)
     
     return df2
 
