@@ -46,6 +46,8 @@ if len(user_args) != 0:
 
         user_args.pop(subj_idx)
         user_args.remove('-s')
+    else:
+    	group_df = None
 
 
     # With all other possible, valid arguments removed, check for a path to files
