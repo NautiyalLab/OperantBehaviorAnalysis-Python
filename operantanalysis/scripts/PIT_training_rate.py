@@ -64,9 +64,6 @@ except IndexError:
     df.to_excel("output.xlsx")
 
 
-df.to_excel("output.xlsx")
-
-
 graph_toggle = input('Would you like to see graphs of CS+ Responding (Y/n)?    ')
 
 if graph_toggle=='Y':
