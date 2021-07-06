@@ -51,10 +51,26 @@ def read_raw_files(files):
         lines = raw_data.splitlines()
         # Line 5 is the subject ID. The line format is 'Animal ID, A252', e.g.
         animal_id = lines[5].split(',')[1].strip()
-        # Line 5 shows the number of presentations. 
-        # The format is 'Max Number Presentations, 20', e.g. 
-        presentations = int(lines[9].split(',')[1].strip())
-        
+
+
+        # In the event that the number of trials differs, calculate the number of presentations dynamically. 
+        # The first line of the summary table is at line 11. There will always be a blank line at the end of this table. 
+        # find the location of that blank line, and then get the presentation number of the preceding (i.e. final) presentation. 
+
+        counter = 11
+        line_value = lines[counter]
+        while line_value != '':
+            counter+=1
+            line_value = lines[counter]
+        last_summary_table_line = counter - 1
+        try:
+            presentations = int(lines[last_summary_table_line].split(',')[0].strip())
+        # If the animal did not make any licks, then the table will be empty and the value found
+        # at the specified indices will be PRESENTATION. Attempting to convert this to int will throw a ValueError.
+        except ValueError:
+            # If the animal did not lick, skip the rest of the loop. 
+            continue
+
         # Column Names are always in line 10. 
         cols = []
         for col in lines[10].split(','):
