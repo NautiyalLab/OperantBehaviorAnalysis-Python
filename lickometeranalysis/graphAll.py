@@ -106,7 +106,7 @@ total_df, total_df_by_animals = LickometerAnalysisKit.gen_summary_dataframe(df_d
 
 LickometerAnalysisKit.graph_cumulative_licks(total_df_by_animals, animals, base_folder_name)
 
-LickometerAnalysisKit.individual_graph_by_group(total_df, animals, base_folder_name, 
+LickometerAnalysisKit.individual_graph_by_group(total_df, base_folder_name, 
                                                 grouping_criteria=grouping_criteria, 
                                                 drop_first_block=drop_first_block, 
                                                 normalize_by_water_consumption=norm_by_water)

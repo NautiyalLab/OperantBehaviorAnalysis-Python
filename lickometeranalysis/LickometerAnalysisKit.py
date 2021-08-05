@@ -57,7 +57,18 @@ def read_raw_files(files):
         # The first line of the summary table is at line 11. There will always be a blank line at the end of this table. 
         # find the location of that blank line, and then get the presentation number of the preceding (i.e. final) presentation. 
 
-        counter = 11
+        #Occasionally the the summary table is a line higher than expected, putting the first row of data at 10 and the column headers
+        # at 9. 
+        # We'll add a stupid noodge factor that is determined by whether or not "PRESENTATION" is the first value of line 10. 
+
+        # TODO: Come up with a more dynamic way of determining table start. 
+
+        if lines[10].split(',')[0] != 'PRESENTATION':
+        	noodge = 1
+        else:
+        	noodge = 0
+
+        counter = 11 - noodge
         line_value = lines[counter]
         while line_value != '':
             counter+=1
@@ -73,14 +84,14 @@ def read_raw_files(files):
 
         # Column Names are always in line 10. 
         cols = []
-        for col in lines[10].split(','):
+        for col in lines[10-noodge].split(','):
             cols.append(col.strip())
 
         df_dictionary[animal_id] = pd.DataFrame(index=range(1, presentations+1), columns = cols)
         interlick_intervals[animal_id] = {}
 
         # Data start on line 11 and run until 11+the number of presentations.
-        for idx, line in enumerate(range(11,11+presentations), start=1):
+        for idx, line in enumerate(range((11-noodge),(11-noodge)+presentations), start=1):
 
             ###### POPULATING df_dictionary ######
             
@@ -89,10 +100,12 @@ def read_raw_files(files):
             df_dictionary[animal_id].loc[idx] = sanitized_data
         
             # Sanitizes concentration input. 
-            if df_dictionary[animal_id].loc[idx, 'CONCENTRATION'][0] == '.':
-                # If the concentration is fractional, and the leading character is a decimal point, add a 0 in front of it. 
-                df_dictionary[animal_id].loc[idx, 'CONCENTRATION'] = f"0{df_dictionary[animal_id].loc[idx, 'CONCENTRATION']}"
-
+            try:
+                if df_dictionary[animal_id].loc[idx, 'CONCENTRATION'][0] == '.':
+                    # If the concentration is fractional, and the leading character is a decimal point, add a 0 in front of it. 
+                    df_dictionary[animal_id].loc[idx, 'CONCENTRATION'] = f"0{df_dictionary[animal_id].loc[idx, 'CONCENTRATION']}"
+            except IndexError:
+                    df_dictionary[animal_id].loc[idx, 'CONCENTRATION'] = np.nan
 
             ###### POPULATING interlick_intervals ######
 
@@ -370,10 +383,9 @@ def graph_cumulative_licks(data_frame_by_animal, animals, experiment_label):
     plt.savefig(f'CumulativeLickCount_{experiment_label}.png')
     plt.close('all')
 
-def individual_graph_by_group(data_frame, animals, experiment_label, grouping_criteria='CONCENTRATION', drop_first_block=True, normalize_by_water_consumption=True):
+def individual_graph_by_group(data_frame, experiment_label, grouping_criteria='CONCENTRATION', drop_first_block=True, normalize_by_water_consumption=True):
     '''
     :PARAM data_frame: total_dataframe from gen_summary_dataframe()
-    :PARAM animals: list of animal ids. 
     :PARAM experiment_label: The label to use for naming the produced figure.  
     :PARAM grouping_criteria: The category by which to group data (CONCENTRATION/TUBE).
     :PARAM drop_first_block: Determines whether to include the first block of presentations in the average.
@@ -400,19 +412,19 @@ def individual_graph_by_group(data_frame, animals, experiment_label, grouping_cr
     else:
         dv_to_graph = 'LICKS'
 
-    h_holder = []
+    animals = graphing_DF.index.levels[0]
+
     for animal in animals:
         x_labels = groups
         x_vals = range(len(x_labels))
 
         y_vals = graphing_DF.loc[(animal, groups), dv_to_graph].values
         
-        H, = plt.plot(x_vals, y_vals, marker='*')
-        h_holder.append(H)
+        plt.plot(x_vals, y_vals, marker='*', label=animal)
 
     plt.title(f'Licks at each {grouping_criteria}')
 
-    plt.legend(h_holder, animals)
+    plt.legend()
     
     plt.xticks(x_vals, x_labels)
     plt.xlabel(grouping_criteria)
