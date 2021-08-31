@@ -137,6 +137,10 @@ def read_raw_files(files):
 
         df_dictionary[animal_id] = df_dictionary[animal_id].astype(retype_dict)
 
+        # Remove trials without licking
+        empty_trials = df_dictionary[animal_id][df_dictionary[animal_id].LICKS==0].index
+        df_dictionary[animal_id].drop(empty_trials, inplace=True)
+
     # Creating a variable here is done solely for readability.
     animals = sorted(list(df_dictionary.keys()))
 
@@ -448,7 +452,14 @@ def summarize_licking_curve(data_frame, experiment_label, grouping_criteria='CON
     '''
 
    # Determine groups for graphing and calculate block size (if necessary) based on this. 
-    groups = natsort.natsorted(set(data_frame.loc[:, grouping_criteria]))
+    def conc_as_float(conc_as_str):
+        return float(conc_as_str.replace('%', ''))
+    if grouping_criteria == 'CONCENTRATION':
+        sort_key = conc_as_float
+    else:
+        sort_key = None
+    
+    groups = natsort.natsorted(set(data_frame.loc[:, grouping_criteria]), key=sort_key)
 
     if drop_first_block:
         block_size = len(groups)
