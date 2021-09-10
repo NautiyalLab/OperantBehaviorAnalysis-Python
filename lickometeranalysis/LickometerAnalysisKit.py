@@ -64,9 +64,9 @@ def read_raw_files(files):
         # TODO: Come up with a more dynamic way of determining table start. 
 
         if lines[10].split(',')[0] != 'PRESENTATION':
-        	noodge = 1
+            noodge = 1
         else:
-        	noodge = 0
+            noodge = 0
 
         counter = 11 - noodge
         line_value = lines[counter]
@@ -170,6 +170,8 @@ def gen_summary_dataframe(animal_dataframes, animals, experiment_label, drop_fir
         
         # Determine the target indices to which to write: 
         len_index = animal_dataframes[animal].shape[0]
+        if len_index == 0:
+            continue
         new_index = pd.Index(range(idx_start, idx_start+len_index))
         # ...and increment idx_start for the next loop.
         idx_start = new_index[-1]+1
@@ -374,16 +376,16 @@ def graph_cumulative_licks(data_frame_by_animal, animals, experiment_label):
     Creates a plot of each animal's cumulative licking over all presentations. 
     '''
 
-    h_holder = []
     for animal in animals:
-        x_vals = data_frame_by_animal.loc[animal, :].index
-        y_vals = data_frame_by_animal.loc[animal, 'LICKS'].values.cumsum()
-        H, = plt.plot(x_vals, y_vals)
-        h_holder.append(H)
+        try:
+            x_vals = data_frame_by_animal.loc[animal, :].index
+            y_vals = data_frame_by_animal.loc[animal, 'LICKS'].values.cumsum()
+            plt.plot(x_vals, y_vals, label=animal)
+        except:
+            pass   
     plt.xlabel('Presentation #')
     plt.ylabel('Total Licks')
     plt.title('Cumulative Licks Over Session')
-    plt.legend(h_holder, animals)   
     plt.savefig(f'CumulativeLickCount_{experiment_label}.png')
     plt.close('all')
 
