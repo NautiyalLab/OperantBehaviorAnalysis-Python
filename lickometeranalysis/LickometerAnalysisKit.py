@@ -29,7 +29,7 @@ retype_dict = {'PRESENTATION': 'int',
 
 ##### INPUT FUNCTIONS ##### 
 
-def read_raw_files(files):
+def read_raw_files(files, drop_empty_trials=True):
     '''
     :PARAM files: A list of paths to raw .txt files for analysis.
     :RETURN (df_dictionary,        : A dictionary containing individual DataFrames for each animal
@@ -138,8 +138,9 @@ def read_raw_files(files):
         df_dictionary[animal_id] = df_dictionary[animal_id].astype(retype_dict)
 
         # Remove trials without licking
-        empty_trials = df_dictionary[animal_id][df_dictionary[animal_id].LICKS==0].index
-        df_dictionary[animal_id].drop(empty_trials, inplace=True)
+        if drop_empty_trials:
+            empty_trials = df_dictionary[animal_id][df_dictionary[animal_id].LICKS==0].index
+            df_dictionary[animal_id].drop(empty_trials, inplace=True)
 
     # Creating a variable here is done solely for readability.
     animals = sorted(list(df_dictionary.keys()))

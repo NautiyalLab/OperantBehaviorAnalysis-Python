@@ -18,7 +18,7 @@ path_to_files = argv[1]
 target_file_search_term = path.join(path_to_files, '*.ms8.txt')
 files = glob.glob(target_file_search_term)
 
-df_dict, ili_dict, animals = LickometerAnalysisKit.read_raw_files(files)
+df_dict, ili_dict, animals = LickometerAnalysisKit.read_raw_files(files, drop_empty_trials=False)
 subjects = list(df_dict.keys())
 
 
