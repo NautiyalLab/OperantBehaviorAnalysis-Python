@@ -7,6 +7,10 @@ from os import path
 from tkinter import filedialog
 from tkinter import *  # noqa
 
+def getFolderPath():
+    folder_selected = filedialog.askdirectory()
+    folderPath.set(folder_selected)
+
 '''
 This script will perform basic processing of .ms8.txt files produced by the MED-Associates
 legacy-Davis Rig Lickometer. 
@@ -66,11 +70,48 @@ if len(user_args) != 0:
 else:
     print('Please select a directory containing files for analysis.')
     root = Tk()  # noqa
-    root.withdraw()
-    path_to_files = filedialog.askdirectory()
-    norm_by_water = bool(input('Normalize licking by water intake (True/False):    '))
-    drop_first_block = bool(input('Drop first block of presentations from analysis (True/False):    '))
-    grouping_criteria = input('Enter grouping criteria (Concentration/Tube):    ').upper()
+    # root.withdraw()
+    folderPath = StringVar()
+    a = Label(root ,text="Enter name")
+    a.grid(row=0,column = 0)
+    E = Entry(root,textvariable=folderPath)
+    E.grid(row=0,column=1)
+    btnFind = Button(root, text="Browse Folder",command=getFolderPath)
+    btnFind.grid(row=0,column=2)
+
+    norm_label = Label(root, text='Normalize licking by water intake?')
+    norm_label.grid(row=1, column=0)
+    norm_true = IntVar()
+    Checkbutton(root, text='Check for "Yes"', variable=norm_true).grid(row=1, column=1, sticky=W)
+
+    drop_label = Label(root, text='Drop first block of presentations from analysis?')
+    drop_label.grid(row=2, column=0)
+    drop_true = IntVar()
+    Checkbutton(root, text='Check for "Yes"', variable=drop_true).grid(row=2, column=1, sticky=W)
+
+    group_label = Label(root, text='Grouping criteria:')
+    group_label.grid(row=3, column=0)
+    tube_group = IntVar()
+    conc_group = IntVar()
+    Checkbutton(root, text='Group by CONCENTRATION', variable=conc_group).grid(row=3, column=1, sticky=W)
+    Checkbutton(root, text='Group by TUBE', variable=tube_group).grid(row=3, column=2, sticky=W)
+
+    Button(root, text='Done', command=root.quit).grid(row=4, column=1, sticky=W, pady=3)
+
+    mainloop()
+    root.destroy()
+
+    path_to_files = folderPath.get()
+
+    norm_by_water = bool(norm_true.get())
+    drop_first_block = bool(drop_true.get())
+    if conc_group.get():
+        grouping_criteria = 'CONCENTRATION'
+    else:
+        if not tube_group.get():
+            print('No grouping criteria selected. Defaulting to TUBE.')
+        grouping_criteria = 'TUBE'
+
 
 
 
