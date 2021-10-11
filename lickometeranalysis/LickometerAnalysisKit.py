@@ -182,7 +182,16 @@ def gen_summary_dataframe(animal_dataframes, animals, experiment_label, drop_fir
         animal_dataframes[animal].set_index(new_index, inplace=True)
         
         # Write the data.
-        total_dataframe.loc[new_index, cols] = animal_dataframes[animal].loc[new_index, cols]
+        try:
+            total_dataframe.loc[new_index, cols] = animal_dataframes[animal].loc[new_index, cols]
+        except KeyError:
+            for col in cols:
+                try:
+                    total_dataframe.loc[new_index, col] = animal_dataframes[animal].loc[new_index, col]
+                except KeyError:
+                    print(f'{col} not found for {animal}. Storing as NaN.')
+                    total_dataframe.loc[new_index, col] = np.nan
+
         total_dataframe.loc[new_index, 'AnimalID'] = animal
 
         # If grouping by concentrations, normalize licking by water consumption. 
@@ -381,7 +390,7 @@ def graph_cumulative_licks(data_frame_by_animal, animals, experiment_label):
         try:
             x_vals = data_frame_by_animal.loc[animal, :].index
             y_vals = data_frame_by_animal.loc[animal, 'LICKS'].values.cumsum()
-            plt.plot(x_vals, y_vals, label=animal)
+            plt.plot(x_vals, y_vals, label=animal, marker='+')
         except:
             pass   
     plt.xlabel('Presentation #')
