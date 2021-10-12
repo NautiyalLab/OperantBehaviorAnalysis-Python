@@ -98,6 +98,8 @@ else:
 
     Button(root, text='Done', command=root.quit).grid(row=4, column=1, sticky=W, pady=3)
 
+    root.eval('tk::PlaceWindow . center')
+
     mainloop()
     root.destroy()
 
