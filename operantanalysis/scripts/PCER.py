@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from operantanalysis import loop_over_days, extract_info_from_file, reward_retrieval, cue_responding_duration, \
     total_head_pokes, cue_iti_responding, response_rate_across_cue_iti
 import pandas as pd

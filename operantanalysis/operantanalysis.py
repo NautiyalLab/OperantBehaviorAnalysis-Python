@@ -39,7 +39,9 @@ def date_sort_key(date_as_string, date_fmt = '%b_%d_%y', date_grep_fmt = '\w{3}_
     
     try:
         sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
-    except AttributeError:
+        date_info = datetime.datetime.strptime(sanitized_string_date, date_fmt)
+    except (AttributeError, ValueError) as e:
+        print(e)
         # If the desired string is not matched, re.search will return NoneType and 
         # group(0) will yield an AttributeError. 
         print(f'The date is {date_as_string}\n\
@@ -50,9 +52,8 @@ def date_sort_key(date_as_string, date_fmt = '%b_%d_%y', date_grep_fmt = '\w{3}_
 
         # and then try it again.
         sanitized_string_date = re.search(date_grep_fmt, date_as_string).group(0)
+        date_info = datetime.datetime.strptime(sanitized_string_date, date_fmt)
 
-
-    date_info = datetime.datetime.strptime(sanitized_string_date, date_fmt)
 
     return date_info.month, date_info.day, date_info.year
 
