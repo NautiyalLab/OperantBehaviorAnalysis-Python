@@ -139,7 +139,7 @@ if len(files) == 0:
 
 
 # Read in files
-df_dict, ili_dict, animals = LickometerAnalysisKit.read_raw_files(files)
+df_dict, ili_dict, animals = LickometerAnalysisKit.read_raw_files(files, drop_empty_trials=False)
 # Create DataFrames
 total_df, total_df_by_animals = LickometerAnalysisKit.gen_summary_dataframe(df_dict, animals, base_folder_name,
                                                                             drop_first_block=drop_first_block,
