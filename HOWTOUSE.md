@@ -12,7 +12,7 @@ You can also periodically update this fork by pulling changes from the original 
 - Download the most recent version here: https://www.anaconda.com/distribution/#macos
 - If you have windows, make sure to go to the windows tab and download the graphical interface
 - Go to environments and create a new one with a useful name, in the latest version of Python
-- Install pytest, numpy, scipy, matplotlib, and pandas in that environment
+- Install pytest, openpyxl, numpy, scipy, matplotlib, natsort, and pandas in that environment
 #### GitHub Desktop
 - This application allows you to connect your local git with GitHub without having to go through Shell (but everything can definitely be done in Shell if you so choose)
 - Download here: https://desktop.github.com/

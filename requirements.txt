@@ -2,3 +2,7 @@ numpy
 scipy
 matplotlib
 pandas
+natsort
+glob
+sys
+os

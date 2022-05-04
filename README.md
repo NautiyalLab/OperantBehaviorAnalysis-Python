@@ -2,18 +2,16 @@
 This repository will be used in the Nautiyal Lab for analyzing output from MEDAssociates Operant Chambers. 
 
 ## Background
-Operant conditioning is a form of learning that occurs through responses to behavior. For example, a mouse pushes a lever and then receives a reward. The action of pushing the lever becomes associated with the reward, and the mouse continues the behavior. In out lab, we use operant (as well as Pavlovian) conditioning to examine different aspects of impulsivity.
+Operant conditioning is a form of learning that occurs through responses to behavior. For example, a mouse pushes a lever and then receives a reward. The action of pushing the lever becomes associated with the reward, and the mouse continues the behavior. In out lab, we use operant (as well as Pavlovian) conditioning to examine different aspects of impulsivity. Stephanie has created an excellent codebase for analyzing data produced by MED boxes. 
 
 ## Problem
-I (Stephanie) will be rewriting analysis code that I wrote (self-taught, so full of anti-patterns and inefficient) in MatLab. Analysis for Nautiyal Lab operant data used to be done in Excel macros, which was time consuming, convoluted, and inflexible. Ideally this code will be accessible, so everyone in our lab will be able to use and modify it as needed. The code needs to be usable for people with very little programming experience.
-The operant boxes simply output a list of numbers, which are concatenated time and event codes (for example, 160901011.0, where 16090 is a relative time and 1011 indicates that the mouse broke an IR beam, poking their head into the reward receptacle). These numbers are outputed everytime something happens, both the in mouse's behavior and in the operant box (like lights going on or levers coming out). We need code which will read these files, separate time and event codes, and derive meaningful behavioral analysis. 
-Also, we need the code to be flexible, so we can input a single day's run of animals on that day for immediate feedback, but also input multiple days at once so we can see changes over time. 
+To make the code user friendly, it was primarily written to be used with a GUI. I'd prefer to run it from a CLI, but there are certain aspects now that do not function
+well with thiss.
+I also prefer to have the ability to automatically  generate graphs of data during training to easily check up on animal progress on a day to day basis. 
 
 ## Solution
-The ultimate solution to this problem is to write scripts for each kind of paradigm we use in the lab, where the user inputs files (or folders for each day) and conditions, and the program outputs behavioral measures in tables or graphs as needed.
-The first goal will be to write functions for each operant paradigm, which will analyze a single animal's run in the operant box.
-The second goal will be to write scripts to analyze multiple animals across days.
-The final goal will be to graph the computed analysis.
+I'm going to make tweaks that are almost entirely for my own ease of use in this branch. Those tweaks will primarily be resolving any bugs that arise from attempting
+to execute certain things from the command line and adding in some graphing functionality. 
 
 ## Paradigms and Schedules
 ### Trough Train (1 and 2)
@@ -78,3 +76,4 @@ The final goal will be to graph the computed analysis.
 - Animals receive randomly delivered rewards (20 minutes), given LiCl, then placed back in context (20 minutes)
 - Reward delivery is the same as TT2, so that analysis can be used here
 ### Visualization of Session
+- I will be adding some of that in the Command Line branch. 
