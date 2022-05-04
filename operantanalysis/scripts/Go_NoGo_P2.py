@@ -24,7 +24,7 @@ def Go_NoGo(loaded_file, i):
     df2 = pd.DataFrame([[loaded_file['Subject'], int(i + 1), float(dippers),
                          float(successful_go_trials) / float(go_trials),
                          (float(nogo_trials) - float(successful_nogo_trials)) / float(nogo_trials),
-                         float(successful_go_trials) / float(go_trials) - float(successful_nogo_trials) / float(nogo_trials),
+                         (float(successful_go_trials) / float(go_trials)) - (float(successful_nogo_trials) / float(nogo_trials)),
                          float(go_latency)]],
                        columns=column_list)
 

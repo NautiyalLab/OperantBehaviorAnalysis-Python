@@ -1,9 +1,11 @@
 from operantanalysis import loop_over_days, extract_info_from_file, cue_responding_duration
 import pandas as pd
+import statistics
 
 
-column_list = ['Subject', 'Condition', 'Day', 'Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
-               'Noise ITI', 'Inhibitor Pokes Duration', 'Inhibitor ITI']
+#column_list = ['Subject', 'Condition', 'Day', 'Click Pokes Duration', 'Click ITI', 'Noise Pokes Duration',
+#               'Noise ITI', 'Inhibitor Pokes Duration', 'Inhibitor ITI']
+column_list = ['Subject', 'Condition', 'Day', 'ITI']
 
 
 def CI_training_function(loaded_file, i):
@@ -18,9 +20,11 @@ def CI_training_function(loaded_file, i):
     (B_dur_individual, B_dur_total, BITI_dur_individual, BITI_dur_total) = cue_responding_duration(timecode, eventcode, 'ExcitorBTrialStart', 'ExcitorBTrialEnd', 'PokeOn1', 'PokeOff1')
     (X_dur_individual, X_dur_total, XITI_dur_individual, XITI_dur_total) = cue_responding_duration(timecode, eventcode, 'InhibitorTrialStart', 'InhibitorTrialEnd', 'PokeOn1', 'PokeOff1')
 
+#    df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['MSN'], int(i + 1),
+#                         float(A_dur_total), float(AITI_dur_total), float(B_dur_total), float(BITI_dur_total),
+#                         float(X_dur_total), float(XITI_dur_total)]], columns=column_list)
     df2 = pd.DataFrame([[loaded_file['Subject'], loaded_file['MSN'], int(i + 1),
-                         float(A_dur_total), float(AITI_dur_total), float(B_dur_total), float(BITI_dur_total),
-                         float(X_dur_total), float(XITI_dur_total)]], columns=column_list)
+                         float(statistics.mean([AITI_dur_total, BITI_dur_total, XITI_dur_total]))]], columns=column_list)
 
     return df2
 
