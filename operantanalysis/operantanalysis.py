@@ -679,7 +679,6 @@ def bin_by_time(timecode, eventcode, bin_length, counted_event):
         num_bins = int(timecode[-1] // bin_length) + 1
     elif timecode[-1] % bin_length == 0:
         num_bins = int(timecode[-1] // bin_length)
-
     counts_for_each_bin = [0] * num_bins
 
     for i in range(num_bins):
