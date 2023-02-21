@@ -260,8 +260,8 @@ def cue_iti_responding(timecode, eventcode, code_on, code_off, counted_behavior)
     cue_on = get_events_indices(eventcode, [code_on])
     cue_off = get_events_indices(eventcode, [code_off])
     if len(cue_on) != len(cue_off):
-        cue_off += get_events_indices(eventcode, ['EndSession'])
-    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
+        cue_off += get_events_indices(eventcode, ['EndSession', 'Schedule Shutdown Event-(SYSTEM)-nan-nan-nan'])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession', 'Schedule Startup Event-(SYSTEM)-nan-nan-nan'])
     all_poke_rpm = []
     all_poke_iti_rpm = []
 
@@ -490,8 +490,8 @@ def cue_responding_duration(timecode, eventcode, code_on, code_off, counted_beha
     cue_on = get_events_indices(eventcode, [code_on])
     cue_off = get_events_indices(eventcode, [code_off])
     if len(cue_on) != len(cue_off):
-        cue_off += get_events_indices(eventcode, ['EndSession'])
-    iti_on = get_events_indices(eventcode, [code_off, 'StartSession'])
+        cue_off += get_events_indices(eventcode, ['EndSession', 'Schedule Shutdown Event-(SYSTEM)-nan-nan-nan'])
+    iti_on = get_events_indices(eventcode, [code_off, 'StartSession', 'Schedule Startup Event-(SYSTEM)-nan-nan-nan'])
     all_poke_dur = []
     all_iti_poke_dur = []
     all_cue_duration = []
